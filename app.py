@@ -38,6 +38,7 @@ st.markdown("""
     div.stButton > button:hover { background-color: #FFD600 !important; color: #000000 !important; }
 
     .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
+    img { border-radius: 15px; border: 3px solid #000000; margin-bottom: 10px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -141,14 +142,14 @@ if not engine.is_ending():
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
 
-    # 🌟 修正圖片渲染邏輯 (使用最新 API use_container_width)
-    if "images" in stage and isinstance(stage["images"], list):
+    # 圖片渲染相容處理
+    if "images" in stage and isinstance(stage["images"], list) and len(stage["images"]) > 0:
         cols = st.columns(len(stage["images"]))
         for col, img_url in zip(cols, stage["images"]):
             with col:
-                st.image(img_url, use_container_width=True)
-    elif "image" in stage:
-        st.image(stage["image"], use_container_width=True)
+                st.image(img_url, use_column_width=True)
+    elif "image" in stage and stage["image"]:
+        st.image(stage["image"], use_column_width=True)
 
     st.markdown(f"""
     <div class="kids-speech-bubble">
