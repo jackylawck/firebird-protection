@@ -1,4 +1,4 @@
-# 🦸‍♂️ Firebird Protection 1: Toy Planet Adventure
+# 🦸‍♂️ Firebird Protection
 > **A Interactive Bilingual Storybook App by Son & Dad**
 
 ---
