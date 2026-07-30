@@ -1,6 +1,4 @@
 import streamlit as st
-from gtts import gTTS
-import io
 
 # 頁面配置
 st.set_page_config(
@@ -25,16 +23,6 @@ st.markdown("""
     .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
     </style>
 """, unsafe_allow_html=True)
-
-# 🔊 語音生成函數 (Text-to-Speech)
-def play_audio(text, lang='zh-TW'):
-    try:
-        tts = gTTS(text=text, lang=lang)
-        fp = io.BytesIO()
-        tts.write_to_fp(fp)
-        st.audio(fp, format='audio/mp3')
-    except Exception as e:
-        st.error("語音讀取失敗，請確保已連接網絡。")
 
 # ----------------- 健康爆笑雙語 30 分支場景庫 -----------------
 SCENES = {
@@ -228,7 +216,7 @@ if 'current_node' not in st.session_state:
 
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠 1：玩具星球大冒險 🦸‍♂️</p>', unsafe_allow_html=True)
 st.markdown('<p class="en-title">Firebird Protection 1: Toy Planet Adventure</p>', unsafe_allow_html=True)
-st.caption("雙語發聲版 | 為 Jarvis 量身打造的健康爆笑冒險")
+st.caption("為 Jarvis 量身打造的健康爆笑雙語冒險")
 st.markdown("---")
 
 current_step = st.session_state.step
@@ -246,15 +234,6 @@ if current_step <= 6:
     st.markdown(f'<p class="kids-sfx">{stage["title_tc"]}<br><span style="font-size:1.2rem;">{stage["title_en"]}</span></p>', unsafe_allow_html=True)
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
-    
-    # 🔊 TTS 發聲按鈕
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🔊 聽中文故事 (Listen in Chinese)", key=f"tts_tc_{current_step}"):
-            play_audio(stage["story_tc"], lang='zh-TW')
-    with col2:
-        if st.button("🔊 聽英文故事 (Listen in English)", key=f"tts_en_{current_step}"):
-            play_audio(stage["story_en"], lang='en')
 
     st.markdown(f"""
     <div class="kids-speech-bubble">
@@ -302,4 +281,4 @@ else:
         st.rerun()
 
 st.markdown("---")
-st.caption("🔥 Firebird Protection App 1 | Jarvis & Daddy Exclusive 雙語發聲版")
+st.caption("🔥 Firebird Protection App 1 | Jarvis & Daddy Exclusive 雙語純淨版")
