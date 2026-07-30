@@ -1,23 +1,21 @@
 import streamlit as st
-import random
 import time
 
 # 頁面配置
 st.set_page_config(
-    page_title="Firebird Protection | 火鷹俠故事總部",
+    page_title="Firebird Protection | 10關互動故事大冒險",
     page_icon="🔥",
     layout="centered"
 )
 
-# CSS 樣式美化 (支援深色/淺色模式，高對比度文字)
+# CSS 樣式美化 (高對比度文字)
 st.markdown("""
     <style>
     .main-title { 
-        font-size: 2.3rem; 
+        font-size: 2.2rem; 
         color: #FF4B4B; 
         font-weight: bold; 
         text-align: center; 
-        margin-bottom: 5px;
     }
     .story-card { 
         background-color: #F0F4F8; 
@@ -26,213 +24,186 @@ st.markdown("""
         border-radius: 12px; 
         border-left: 6px solid #FF4B4B; 
         margin-bottom: 20px;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         line-height: 1.6;
     }
     .story-card b, .story-card i {
         color: #000000 !important;
     }
-    .highlight-box {
-        background-color: #FFF3CD;
-        color: #856404 !important;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #FFEBAA;
-        font-weight: bold;
-        margin-bottom: 15px;
+    .print-box {
+        background-color: #FFFFFF;
+        color: #000000 !important;
+        padding: 25px;
+        border: 2px dashed #FF4B4B;
+        border-radius: 10px;
+        font-family: 'Courier New', Courier, monospace;
+        line-height: 1.8;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 語言切換選單
-lang = st.sidebar.radio("🌐 Language / 語言", ["繁體中文", "English"])
-
-# 側邊欄：英雄檔案
-if lang == "繁體中文":
-    st.sidebar.header("🛡️ 火鷹俠 (Firebird) 檔案")
-    st.sidebar.info("**主角：** Jarvis (火鷹俠)")
-    st.sidebar.success("**系統：** Firebird Protection v2.0")
-    st.sidebar.progress(100, text="能量值：100% 滿格")
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🎒 裝備與合體技能")
-    st.sidebar.write("• **光影翅膀 (Firebird Wings)**")
-    st.sidebar.write("• **百獸召喚 (Animal Squad)**")
-    st.sidebar.write("• **獅王合體 (Lion Fusion)**")
-    st.sidebar.write("• **終極絕招：顏色沙漠土**")
-else:
-    st.sidebar.header("🛡️ Firebird Profile")
-    st.sidebar.info("**Hero:** Jarvis (Firebird)")
-    st.sidebar.success("**System:** Firebird Protection v2.0")
-    st.sidebar.progress(100, text="Energy: 100% Full")
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🎒 Gear & Fusion Skills")
-    st.sidebar.write("• **Firebird Wings**")
-    st.sidebar.write("• **Animal Squad Call**")
-    st.sidebar.write("• **Lion Fusion Form**")
-    st.sidebar.write("• **Finisher: Desert Sand of Color**")
+# 初始化遊戲狀態 Session State
+if 'step' not in st.session_state:
+    st.session_state.step = 1
+if 'story_history' not in st.session_state:
+    st.session_state.story_history = []
 
 # 主標題
-if lang == "繁體中文":
-    st.markdown('<p class="main-title">🔥🦅 火鷹俠：Firebird Protection 傳奇</p>', unsafe_allow_html=True)
-    st.caption("Jarvis 與爸爸聯合創作 — 雙語互動式英雄故事 App")
-else:
-    st.markdown('<p class="main-title">🔥🦅 Firebird Protection Legends</p>', unsafe_allow_html=True)
-    st.caption("Co-created by Jarvis & Dad — Interactive Story Generator")
+st.markdown('<p class="main-title">🔥🦅 火鷹俠：10關大冒險</p>', unsafe_allow_html=True)
+st.caption("Jarvis & 爸爸 專屬創作 | Firebird Protection 互動故事")
 
 st.markdown("---")
 
-# 主選單分頁
-tab1, tab2 = st.tabs(["📖 經典故事篇章 (Classic Story)", "🎲 100篇故事生成器 (100 Story Generator)"])
+# 10 個關卡的劇情與 3 個選項設定
+stages = {
+    1: {
+        "title": "第 1 關：深山迷路與神秘電話",
+        "story": "火鷹俠一邊打電話一邊尋找隱蔽地方，一不留神走得太遠，來到了一座神秘的深山森林。四周靜悄悄的，突然樹林裡傳來異響！火鷹俠該怎麼辦？",
+        "choices": [
+            "A. 🚀 啟動 Firebird Protection 力量，召喚森林野生動物做手下！",
+            "B. 🛡️ 開啟「火鷹隱形防護罩」，先躲在樹上觀察形勢！",
+            "C. 🔊 用智能手環大聲播放「火鷹戰歌」，嚇退潛伏的敵人！"
+        ]
+    },
+    2: {
+        "title": "第 2 關：動物手下的搜尋任務",
+        "story": "火鷹俠集結了動物小隊（飛鷹、狼群、松鼠）！現在需要展開搜尋，尋找隱藏在森林深處的壞人。火鷹俠要點樣分工？",
+        "choices": [
+            "A. 🦅 派飛鷹小隊飛上高空，做全空域 360 度偵查！",
+            "B. 🐺 讓狼群憑嗅覺在地面灌木叢仔細搜尋！",
+            "C. 🐿️ 讓小松鼠們在樹冠之間穿梭，尋找秘密基地入口！"
+        ]
+    },
+    3: {
+        "title": "第 3 關：發現神秘山洞基地",
+        "story": "動物手下們終於在懸崖下方找到了一個冒著紫煙的神秘山洞！壞人就在裡面，但山洞口有激光防禦網。火鷹俠決定：",
+        "choices": [
+            "A. 💥 用「火鷹烈焰衝擊」直接轟開激光防禦網！",
+            "B. 鑽進小松鼠挖的秘密地道，偷偷溜進山洞！",
+            "C. 讓大象手下搬來巨石，把激光發射器砸爛！"
+        ]
+    },
+    4: {
+        "title": "第 4 關：壞人的黑科技武器",
+        "story": "衝進山洞後，壞人首領「時光黑影」推出了龐大的黑科技大砲，準備向城市發射「時間倒轉光束」！火鷹俠如何應對？",
+        "choices": [
+            "A. 🛡️ 展開「火鷹超級防護罩」，死守大砲射線！",
+            "B. ⚡ 啟動「光影翅膀超光速」，飛過去拔掉大砲的電源線！",
+            "C. 讓獵豹手下快速奪走壞人手中的發射遙控器！"
+        ]
+    },
+    5: {
+        "title": "第 5 關：萬獸之王登場！",
+        "story": "壞人見大砲無效，啟動了緊急備用能源，發射出強大的能量波！就在危急關頭，森林深處傳來一聲震撼山谷的獅吼——百獸之王「金獅」衝了進來！火鷹俠要做什麼？",
+        "choices": [
+            "A. 🦁 與金獅進行「終極合體」，變成【獅王火鷹俠】！",
+            "B. 🤝 給金獅穿上 Firebird Protection 護甲，雙人並肩作戰！",
+            "C. 讓金獅掩護其他動物手下撤退，自己獨自對決壞人！"
+        ]
+    },
+    6: {
+        "title": "第 6 關：合體形態的試煉",
+        "story": "火鷹俠與金獅成功合體！【獅王火鷹俠】身上閃耀著金紅色的霸氣烈焰！壞人嚇得派出了一群鋼鐵機械蜘蛛包圍過來！獅王火鷹俠會用哪招？",
+        "choices": [
+            "A. 🐾 發動「獅王火焰爪」，把機械蜘蛛瞬間切成碎片！",
+            "B. 🦁 喊出「獅王咆哮彈」，用音波將所有蜘蛛震飛！",
+            "C. 🪶 揮動火焰翅膀，刮起烈焰風暴將蜘蛛全部燒融！"
+        ]
+    },
+    7: {
+        "title": "第 7 關：壞人的最後掙紮",
+        "story": "機械蜘蛛全滅！壞人首領「時光黑影」眼看要敗，決定按下一鍵自爆按鈕，想把山洞和周圍森林一起炸毀！火鷹俠該怎麼辦？",
+        "choices": [
+            "A. 凍結！用智能手環發射「零度冰封光束」凍結自爆計時器！",
+            "B. 💨 用超高速把自爆裝置一把抓起，扔向無人的高空爆炸！",
+            "C. 🛡️ 用最大功率的防護罩籠罩整個自爆裝置，吸收爆炸威力！"
+        ]
+    },
+    8: {
+        "title": "第 8 關：發動終極絕招！",
+        "story": "自爆危機解除！壞人已經無路可逃，但還在垂死掙紮。獅王火鷹俠積蓄了全身最強的力量，準備一擊必殺！他大喊一聲發動的絕招是：",
+        "choices": [
+            "A. 🌈「—— 顏色沙漠土 ！！！」（把壞人全變成五彩沙土）",
+            "B. ✨「—— 彩虹星辰塵 ！！！」（把壞人全變成閃耀星塵）",
+            "C. 💎「—— 五彩水晶砂 ！！！」（把壞人全封印成彩色水晶）"
+        ]
+    },
+    9: {
+        "title": "第 9 關：淨化與拯救成功！",
+        "story": "絕招發射！耀眼的光芒籠罩了整個山洞，壞人和他們的邪惡武器全部變成了五彩繽紛的沙土，徹底被淨化！森林恢復了平靜，動物手下們紛紛歡呼！火鷹俠接下來要做咩？",
+        "choices": [
+            "A. 🎺 帶領動物大軍舉辦一場「森林勝利狂歡派對」！",
+            "B. 🚁 叫總部派出飛艇，把彩色的沙土運回去研究做藝術品！",
+            "C. 飛回市中心大鐘樓，向全城市民宣告和平回歸！"
+        ]
+    },
+    10: {
+        "title": "第 10 關：英雄歸來與傳奇誕生",
+        "story": "火鷹俠完成了任務，回到了總部。智囊隊長和全城市民給他送上了最高榮譽勳章！Jarvis（火鷹俠）對大家說的英雄名言是：",
+        "choices": [
+            "A. 💬「只要有 Firebird Protection，正義永遠不會失敗！」",
+            "B. 💬「團結就是力量！感謝我的森林動物好夥伴！」",
+            "C. 💬「保護城市是我的職責！下一場冒險我們再見！」"
+        ]
+    }
+}
 
-# ----------------- Tab 1: 經典故事 -----------------
-with tab1:
-    if lang == "繁體中文":
-        st.header("📜 主線故事：森林百獸合體大作戰")
+# 遊戲流程控制
+current_step = st.session_state.step
+
+if current_step <= 10:
+    # 顯示進度條
+    st.progress(current_step / 10, text=f"冒險進度：第 {current_step} / 10 關")
+    
+    stage_info = stages[current_step]
+    st.header(stage_info["title"])
+    
+    st.markdown(f"""
+    <div class="story-card">
+    {stage_info["story"]}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.subheader("請仔仔做出選擇：")
+    selected_option = st.radio("選擇你的劇情走向：", stage_info["choices"], key=f"choice_{current_step}")
+    
+    if st.button("🔥 確定選擇，進入下一關！"):
+        # 記錄選擇
+        st.session_state.story_history.append((stage_info["title"], selected_option))
+        st.session_state.step += 1
+        st.rerun()
+
+else:
+    # 通關，生成完整故事 Print 版
+    st.balloons()
+    st.success("🎉 恭喜通關！火鷹俠 successfully 完成了 10 關大冒險！")
+    
+    st.header("📜 火鷹俠傳奇冒險：完整故事 Print 版")
+    st.caption("你可以直接複製以下框裡面的完整故事，印出來留念或存檔！")
+    
+    full_story_text = "【火鷹俠：Firebird Protection 10關大冒險】\n\n"
+    full_story_text += "創作者：Jarvis (火鷹俠) & 爸爸\n"
+    full_story_text += "----------------------------------------\n\n"
+    
+    for i, (title, choice) in enumerate(st.session_state.story_history, 1):
+        full_story_text += f"{title}\n"
+        full_story_text += f"【火鷹俠的抉擇】：{choice}\n\n"
         
-        with st.expander("📖 第一章：走得太遠的深山冒險", expanded=True):
-            st.markdown("""
-            <div class="story-card">
-            火鷹俠邊打電話邊尋找隱蔽地方，一不留神就走得太遠，來到了一座神秘的深山森林。<br>
-            為了不被壞人發現，他藏在樹林深處，啟動了 <b>Firebird Protection</b> 的正義力量！<br>
-            森林裡的野生動物們感受到了英雄的光芒，紛紛聚集過來，自願成為火鷹俠的忠誠手下！
-            </div>
-            """, unsafe_allow_html=True)
-
-        with st.expander("📖 第二章：搜捕與發現壞人", expanded=True):
-            st.markdown("""
-            <div class="story-card">
-            「大家一齊搵壞人！」火鷹俠一聲令下，動物大軍動員起來：小鳥在空中觀察，獵豹在陸地追蹤。<br>
-            大家齊心協力，終於在山谷深處的溶洞裡找到了藏在那裡的壞人！
-            </div>
-            """, unsafe_allow_html=True)
-
-        with st.expander("📖 第三章：獅王合體！", expanded=True):
-            st.markdown("""
-            <div class="story-card">
-            面對壞人掏出的黑科技武器，百獸之王獅子大吼一聲衝上前！<br>
-            火鷹俠將光影翅膀與獅子的霸氣力量融合——<br>
-            <b>「 Firebird Protection！獅王火鷹俠，合體！！」</b>
-            </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
-        st.subheader("⚡ 決戰時刻：發動終極絕招！")
-        if st.button("🔥 喊出絕招：顏色沙漠土！！"):
-            st.balloons()
-            st.markdown("""
-            <div class="story-card" style="border-left: 6px solid #28A745;">
-            <b>【第四章：完美成功拯救世界！】</b><br><br>
-            獅王火鷹俠全身閃耀著金紅色的光芒，大聲喊出絕招：<br>
-            <h3 style="color: #FF4B4B; text-align: center;">「—— 顏色沙漠土 ！！！」</h3><br>
-            一道耀眼的彩虹火焰閃過，壞人與他們的武器瞬間全被淨化，變成了五彩繽紛的<b>「顏色沙漠土」</b>飄散在空中！<br><br>
-            <b>🎉 成功啦！火鷹俠與動物手下們打勝仗，成功拯救了世界！</b>
-            </div>
-            """, unsafe_allow_html=True)
-
-    else:
-        st.header("📜 Main Story: Forest Beast Fusion Battle")
-        
-        with st.expander("📖 Chapter 1: Deep into the Forest", expanded=True):
-            st.markdown("""
-            <div class="story-card">
-            While on a phone call, Firebird accidentally walked too far and reached a deep, mysterious forest.<br>
-            To stay hidden, he activated his <b>Firebird Protection</b> power! <br>
-            The wild forest animals felt his heroic light and willingly became his loyal sidekicks!
-            </div>
-            """, unsafe_allow_html=True)
-
-        with st.expander("📖 Chapter 2: Searching for Villains", expanded=True):
-            st.markdown("""
-            <div class="story-card">
-            "Let's find the villains!" Firebird commanded. Birds scanned from the sky while leopards tracked on the ground.<br>
-            Together, the animal squad finally spotted the villains hiding deep inside a mountain cave!
-            </div>
-            """, unsafe_allow_html=True)
-
-        with st.expander("📖 Chapter 3: Lion Fusion!", expanded=True):
-            st.markdown("""
-            <div class="story-card">
-            Facing the villain's heavy machinery, the King of Beasts—the Lion—roared and stepped forward!<br>
-            Firebird combined his flame wings with the Lion's strength:<br>
-            <b>"Firebird Protection! Lion Firebird Fusion!!"</b>
-            </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("---")
-        st.subheader("⚡ Final Battle: Launch Ultimate Move!")
-        if st.button("🔥 Shouting Move: Desert Sand of Color!!"):
-            st.balloons()
-            st.markdown("""
-            <div class="story-card" style="border-left: 6px solid #28A745;">
-            <b>【Chapter 4: World Saved Successfully!】</b><br><br>
-            Glowing with golden-red energy, Lion Firebird shouted at the top of his lungs:<br>
-            <h3 style="color: #FF4B4B; text-align: center;">"—— DESERT SAND OF COLOR !!!"</h3><br>
-            A massive blast of rainbow flame swept across! The villains and their cannons instantly turned into colorful <b>Desert Sand of Color</b>!<br><br>
-            <b>🎉 VICTORY! Firebird and the animal squad successfully saved the world!</b>
-            </div>
-            """, unsafe_allow_html=True)
-
-# ----------------- Tab 2: 100篇故事生成器 -----------------
-with tab2:
-    if lang == "繁體中文":
-        st.header("🎲 火鷹俠 100 篇冒險故事庫")
-        st.write("利用動態生成技術，為 Jarvis 產生 100 篇獨一無二的火鷹俠冒險故事！")
-        
-        num_stories = st.slider("選擇要展示的故事數量：", 1, 100, 5)
-        
-        if st.button("🚀 生成故事"):
-            animals_list = ["森林百獸", "飛天巨鷹隊", "迅捷猛虎群", "鋼鐵大象隊", "深山靈猴群"]
-            fusion_list = ["百獸之王獅子", "黃金飛龍", "冰霜雪豹", "雷霆巨熊", "機械火鳳凰"]
-            villain_list = ["時光黑影", "泥漿怪客", "噪音博士", "影子大魔王", "鋼鐵怪獸"]
-            sand_list = ["顏色沙漠土", "彩虹星辰土", "五彩水晶砂", "黃金耀眼土"]
-
-            st.success(f"已成功為你生成 {num_stories} 篇火鷹俠故事！")
-            
-            for i in range(1, num_stories + 1):
-                a = random.choice(animals_list)
-                f = random.choice(fusion_list)
-                v = random.choice(villain_list)
-                s = random.choice(sand_list)
-                
-                st.markdown(f"""
-                <div class="story-card">
-                <b>🔥 第 {i} 篇：火鷹俠與{f}的{s}大作戰</b><br>
-                • <b>起因：</b> 火鷹俠打電話匿埋走太遠來到深山，召喚了【{a}】成為手下。<br>
-                • <b>搜捕：</b> 手下們齊心協力，終於在山谷裏找到了壞人【{v}】！<br>
-                • <b>合體：</b> 火鷹俠與【{f}】發動強大合體！<br>
-                • <b>決戰：</b> 喊出一聲絕招<b>「{s}！」</b>將壞人全部變成彩色的土，成功拯救世界！
-                </div>
-                """, unsafe_allow_html=True)
-    else:
-        st.header("🎲 Firebird 100 Adventures Generator")
-        st.write("Generates 100 unique Firebird adventure stories for Jarvis!")
-        
-        num_stories = st.slider("Select number of stories to display:", 1, 100, 5)
-        
-        if st.button("🚀 Generate Stories"):
-            animals_list = ["Forest Beasts", "Eagle Squad", "Tiger Unit", "Elephant Force", "Monkey Troop"]
-            fusion_list = ["Mighty Lion", "Golden Dragon", "Frost Leopard", "Thunder Bear", "Mecha Phoenix"]
-            villain_list = ["Clockwork Shadow", "Mud Villain", "Noise Master", "Shadow King", "Iron Beast"]
-            sand_list = ["Desert Sand of Color", "Rainbow Star Dust", "Crystal Sand", "Golden Sparkle Dust"]
-
-            st.success(f"Successfully generated {num_stories} Firebird stories!")
-            
-            for i in range(1, num_stories + 1):
-                a = random.choice(animals_list)
-                f = random.choice(fusion_list)
-                v = random.choice(villain_list)
-                s = random.choice(sand_list)
-                
-                st.markdown(f"""
-                <div class="story-card">
-                <b>🔥 Story #{i}: Firebird & {f}'s {s} Operation</b><br>
-                • <b>Start:</b> Firebird walked too far into the forest during a phone call and summoned the 【{a}】 as sidekicks.<br>
-                • <b>Search:</b> The sidekicks searched everywhere and spotted the villain 【{v}】!<br>
-                • <b>Fusion:</b> Firebird fused with 【{f}】 for ultimate strength!<br>
-                • <b>Finisher:</b> Shouted <b>"{s}!"</b> turning the villains into colorful dust. Mission Success!
-                </div>
-                """, unsafe_allow_html=True)
+    full_story_text += "----------------------------------------\n"
+    full_story_text += "🎉 結局：火鷹俠成功拯救森林與城市，成為傳奇英雄！"
+    
+    # 展示 Print 框
+    st.markdown(f"""
+    <div class="print-box">
+    <pre style="white-space: pre-wrap; word-wrap: break-word;">{full_story_text}</pre>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("🔄 重新玩一次（重新選擇劇情）"):
+        st.session_state.step = 1
+        st.session_state.story_history = []
+        st.rerun()
 
 # 頁尾
 st.markdown("---")
-st.caption("🔥 Firebird Protection App v2.0 | Co-created by Jarvis & Dad")
+st.caption("🔥 Firebird Protection App v3.0 | 版權所有：Jarvis & 爸爸")
