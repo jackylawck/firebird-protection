@@ -1,37 +1,22 @@
-# 🔥🦅 Firebird Protection (火鷹俠)
-
-Welcome to the official command center for **Firebird Protection**! 
-
----
-
-## 🛡️ Hero Profile (英雄檔案)
-
-* **Hero Name:** 火鷹俠 (Firebird)
-* **App / System:** Firebird Protection
-* **Mission:** Protect the city from mysterious threats and maintain peace.
-* **Special Gear:**
-  * 🪶 **Firebird Wings (光影翅膀):** Allows high-speed flight across the city skyline.
-  * 🛡️ **Fire Shield (火鷹防護罩):** Energy shield to protect citizens from danger.
-  * ⌚ **Smart Protection Band (智能手環):** Instant communication with HQ.
+# 🦸‍♂️ Firebird Protection 1: Toy Planet Adventure
+> **A Interactive Bilingual Storybook App by Son & Dad**
 
 ---
 
-## 📖 Story Chapters (故事章節)
+### 📖 About This Project / 關於本專案
+This repository is a **private family project** created solely for interactive storytelling and educational fun between **Son & Dad**. It is non-commercial and strictly for personal entertainment.
 
-### Chapter 1: 怪異的符號 (The Strange Symbol)
-* A mysterious "嘰嘰……咕咕……" signal interrupted city communications.
-* The city clock tower's hands started turning backward!
-
-### Chapter 2: 火鷹俠出擊！ (Firebird to the Rescue!)
-* Firebird Protection system activated.
-* Firebird flew to the clock tower to face the Mysterious Villain!
+本專案為 **Son & Dad 專屬的私人家庭互動繪本創作**，僅供家庭娛樂與學習用途，與任何商業業務無關。
 
 ---
 
-## 🚀 Future Upgrades (系統升級計劃)
-- [ ] Add new flame combo attacks (新火焰招式)
-- [ ] Upgrade Headquarters sensors (升級總部感應器)
-- [ ] Recruits & allies joining the team (加入新盟友)
+### 🌟 Key Features / 專案特色
+- 📚 **Bilingual Storytelling**: Full Traditional Chinese & English content.
+- 🔀 30 Branching Nodes**: Unique choices leading to different hilarious storylines.
+- 📱 Mobile Friendly**: Designed with high-contrast, large fonts for modern screens.
+- 🎨 Free Stock Imagery**: Uses free-to-use visuals from Pexels & Unsplash.
 
 ---
-*Created with love by Jarvis & Dad!*
+
+### 👨‍👦 Credits
+Created with ❤️ by **Son & Dad**.
