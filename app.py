@@ -31,24 +31,10 @@ st.markdown("""
         font-size: 1.5rem !important;
     }
     [data-testid="stSidebar"] label p {
-        color: #000000 !important; /* 側邊欄選單文字為純黑色 */
+        color: #000000 !important; /* 側邊欄 Radio 選項文字鎖定為純黑色 */
         font-size: 1.05rem !important;
         font-weight: 900 !important;
     }
-    
-    /* 💥 修正 Selectbox (下拉選單) 隱形字問題 */
-    div[data-baseweb="select"] > div {
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
-        border: 3px solid #000000 !important;
-        border-radius: 12px !important;
-    }
-    div[data-baseweb="select"] span {
-        color: #000000 !important;
-        font-weight: bold !important;
-    }
-    ul[data-baseweb="menu"] { background-color: #FFFFFF !important; }
-    ul[data-baseweb="menu"] li { color: #000000 !important; font-weight: bold !important; font-size: 1.1rem !important; }
 
     /* Radio 選項樣式（主介面與側邊欄通用：白底黑字） */
     .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
@@ -181,7 +167,7 @@ STORY_1_SCENES = {
 STORY_2_SCENES = {
     "1_START": {
         "title_tc": "第 1 頁：恐龍大暴走！", "title_en": "Page 1: Dinosaur Rampage!",
-        "sfx": "🦖 吼吼！ROAR!", "image": "https://images.pexels.com/photos/12105156/pexels-photo-12105156.jpeg?auto=compress&cs=tinysrgb&w=800", # 恐龍玩具
+        "sfx": "🦖 吼吼！ROAR!", "image": "https://images.pexels.com/photos/12105156/pexels-photo-12105156.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "不好了！主題樂園的調皮暴龍偷走了園長的「超級金盃」！火鷹俠要入去樂園找回金盃，他決定：",
         "story_en": "Oh no! The cheeky T-Rex at the theme park stole the 'Super Golden Trophy'! Firebird must get it back. He decides to:",
         "choices": {"A": "🚀 啟動「超級火箭推進器」直接飛進樂園！ (Use Super Rocket Boosters to fly in!)", "B": "🤖 騎上一隻「超級機械三角龍」衝進去！ (Ride a Super Robot Triceratops!)", "C": "🏀 變成一個巨大的彈彈球，彈過樂園大門！ (Turn into a giant bouncy ball and bounce over the gate!)"}
@@ -300,13 +286,19 @@ if 'story_history' not in st.session_state:
 if 'current_node' not in st.session_state:
     st.session_state.current_node = "1_START"
 
-# 🚩 側邊欄（Sidebar）
+# 🚩 側邊欄（Sidebar）：改用絕對不會隱形的 Radio 單選選單
 st.sidebar.markdown("## 📚 選擇故事 (Select Story)")
-story_options = {k: v["name"] for k, v in STORIES.items()}
-selected_story_name = st.sidebar.selectbox("今日想聽邊個故事？ (Which story today?)", list(story_options.values()))
+story_list_names = [v["name"] for v in STORIES.values()]
 
-# 如果切換了故事，重置所有進度
-selected_story_key = [k for k, v in story_options.items() if v == selected_story_name][0]
+selected_story_name = st.sidebar.radio(
+    "今日想聽邊個故事？", 
+    story_list_names, 
+    index=0 if st.session_state.current_story == "Story1" else 1,
+    key="sidebar_story_radio"
+)
+
+# 切換故事邏輯
+selected_story_key = "Story1" if "1" in selected_story_name else "Story2"
 if st.session_state.current_story != selected_story_key:
     st.session_state.current_story = selected_story_key
     st.session_state.step = 1
@@ -321,7 +313,7 @@ page_options = [
     "第 4 頁 (Page 4)", "第 5 頁 (Page 5)", "第 6 頁 (Page 6)"
 ]
 
-selected_page_str = st.sidebar.radio("選擇頁數 (Select Page)：", page_options, index=st.session_state.step - 1, key="sidebar_jump_radio")
+selected_page_str = st.sidebar.radio("選擇頁數：", page_options, index=st.session_state.step - 1, key="sidebar_jump_radio")
 jump_page_num = page_options.index(selected_page_str) + 1
 
 if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
@@ -329,7 +321,7 @@ if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
     if jump_page_num == 1:
         st.session_state.current_node = "1_START"
     else:
-        st.session_state.current_node = f"{jump_page_num}_A" # 預設切換至 A 路線
+        st.session_state.current_node = f"{jump_page_num}_A"
     st.rerun()
 
 st.sidebar.markdown("---")
@@ -355,7 +347,6 @@ node_key = st.session_state.current_node
 if current_step <= 6:
     stage = CURRENT_SCENES.get(node_key)
     
-    # 容錯處理
     if not stage:
         node_key = f"{current_step}_A"
         stage = CURRENT_SCENES[node_key]
