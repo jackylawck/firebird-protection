@@ -60,7 +60,7 @@ class StoryEngine:
             return 1
 
     def get_current_node_data(self):
-        return self.story_data["nodes"].get(self.current_node)
+        return self.story_data["nodes"].get(self.current_node, {})
 
     def is_ending(self):
         return self.current_node == "END"
@@ -86,8 +86,10 @@ class StoryEngine:
         else:
             self.current_node = f"{page_num}_A"
 
-# ================= 初始化系統狀態 =================
-if "engine" not in st.session_state:
+# 💥 自動版本鎖定：確保每次部署都能完全刷掉舊 Session 快取
+APP_VERSION = "v3.0_clean"
+if "app_version" not in st.session_state or st.session_state.app_version != APP_VERSION:
+    st.session_state.app_version = APP_VERSION
     st.session_state.engine = StoryEngine("Story1")
 
 engine = st.session_state.engine
@@ -138,42 +140,45 @@ if not engine.is_ending():
     
     st.progress(step / 6, text=f"📖 故事進度 Story Progress：{step} / 6")
     
-    st.markdown(f'<p class="kids-sfx">{stage["title_tc"]}<br><span style="font-size:1.1rem;">{stage["title_en"]}</span></p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="kids-sfx">{stage.get("title_tc", "")}<br><span style="font-size:1.1rem;">{stage.get("title_en", "")}</span></p>', unsafe_allow_html=True)
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
 
-    # 💥 終極關鍵修復：嚴謹區分「多圖陣列 list」與「單圖字串 str」
-    try:
-        if "images" in stage and isinstance(stage["images"], list) and len(stage["images"]) > 0:
-            cols = st.columns(len(stage["images"]))
-            for idx, img_url in enumerate(stage["images"]):
-                if isinstance(img_url, str):
-                    cols[idx].image(img_url, use_container_width=True)
-        elif "image" in stage and isinstance(stage["image"], str):
-            st.image(stage["image"], use_container_width=True)
-    except Exception as e:
-        st.info("🖼️ (圖片載入中...)")
+    # 💥 全新超防錯圖片顯示邏輯
+    img_list = []
+    if "images" in stage and isinstance(stage["images"], list):
+        img_list = stage["images"]
+    elif "image" in stage and isinstance(stage["image"], str):
+        img_list = [stage["image"]]
+
+    if len(img_list) > 1:
+        cols = st.columns(len(img_list))
+        for idx, url in enumerate(img_list):
+            cols[idx].image(url, use_column_width=True)
+    elif len(img_list) == 1:
+        st.image(img_list[0], use_column_width=True)
 
     st.markdown(f"""
     <div class="kids-speech-bubble">
-    <p class="tc-story">💬 {stage["story_tc"]}</p>
-    <p class="en-story">{stage["story_en"]}</p>
+    <p class="tc-story">💬 {stage.get("story_tc", "")}</p>
+    <p class="en-story">{stage.get("story_en", "")}</p>
     </div>
     """, unsafe_allow_html=True)
     
     if step < 6:
-        option_keys = list(stage["choices"].keys())
-        option_texts = [f"{k}. {stage['choices'][k]}" for k in option_keys]
+        choices_dict = stage.get("choices", {})
+        option_keys = list(choices_dict.keys())
+        option_texts = [f"{k}. {choices_dict[k]}" for k in option_keys]
         
         selected_text = st.radio("👉 請做出超搞笑抉擇 (Choose your action):", option_texts)
         selected_letter = selected_text[0] 
         
         if st.button("🔥 確定！翻去下一頁！ (Next Page!)"):
-            engine.choose(stage["title_tc"], selected_letter, selected_text)
+            engine.choose(stage.get("title_tc", ""), selected_letter, selected_text)
             st.rerun()
     else:
         if st.button("🎉 看完了！印出專屬雙語故事書！ (Print Storybook!)"):
-            engine.finish_story(stage["title_tc"])
+            engine.finish_story(stage.get("title_tc", ""))
             st.rerun()
 
 else:
