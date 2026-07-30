@@ -7,109 +7,22 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🎨 雙語超大字體 & Mobile-Friendly（手機響應式）CSS
+# 🎨 雙語超大字體 CSS (全面修復 Selectbox 下拉選單隱形字)
 st.markdown("""
     <style>
-    /* 全局背景與字型 */
-    .stApp { 
-        background-color: #E0F7FA; 
-        color: #000000 !important; 
-    }
+    /* 全局背景 */
+    .stApp { background-color: #E0F7FA; color: #000000 !important; }
     
-    p, span, label, div, h1, h2, h3, h4 { 
-        color: #000000 !important; 
-        font-family: 'Comic Sans MS', sans-serif; 
-    }
-
-    /* 📱 手機自動適應圖片 (Responsive Images) */
-    img {
-        max-width: 100% !important;
-        height: auto !important;
-        border-radius: 15px !important;
-        border: 3px solid #000000 !important;
-    }
-
-    /* 標題與音效 */
-    .kids-title { 
-        font-size: clamp(1.8rem, 5vw, 2.6rem) !important; 
-        color: #00838F !important; 
-        font-weight: 900; 
-        text-align: center; 
-        margin-bottom: 5px; 
-        text-shadow: 2px 2px 0px #B2EBF2; 
-    }
-    .en-title { 
-        font-size: clamp(1.2rem, 3.5vw, 1.8rem) !important; 
-        color: #006064 !important; 
-        font-weight: 900; 
-        text-align: center; 
-        margin-bottom: 15px; 
-    }
-    .kids-sfx { 
-        font-size: clamp(1.4rem, 4vw, 2rem) !important; 
-        color: #E65100 !important; 
-        font-weight: 900; 
-        text-align: center; 
-        margin: 10px 0; 
-    }
-
-    /* 對話框：手機端自動調整 padding */
-    .kids-speech-bubble { 
-        background: #FFFFFF; 
-        border: 4px solid #000000; 
-        border-radius: 20px; 
-        padding: 15px; 
-        margin: 12px 0; 
-        box-shadow: 5px 5px 0px #000000; 
-    }
-    .tc-story { 
-        font-size: clamp(1.3rem, 4vw, 1.6rem) !important; 
-        line-height: 1.5; 
-        font-weight: bold; 
-        margin-bottom: 10px; 
-    }
-    .en-story { 
-        font-size: clamp(1.1rem, 3.2vw, 1.3rem) !important; 
-        line-height: 1.4; 
-        color: #37474F !important; 
-        font-style: italic; 
-    }
-
-    /* 📱 手機端 Radio 選項 */
-    .stRadio label { 
-        font-size: clamp(1.1rem, 3.5vw, 1.3rem) !important; 
-        font-weight: bold !important; 
-        color: #000000 !important; 
-        padding: 6px 0; 
-    }
-    .stRadio { 
-        background-color: #FFFFFF; 
-        padding: 15px; 
-        border: 3px solid #000000; 
-        border-radius: 18px; 
-        box-shadow: 4px 4px 0px #000000; 
-        margin-bottom: 15px; 
-    }
-
-    /* 📱 手機端大按鈕 (Easy Tap Area) */
-    div.stButton > button {
-        background-color: #FFEB3B !important;
-        color: #000000 !important;
-        font-size: clamp(1.2rem, 4vw, 1.5rem) !important;
-        font-weight: 900 !important;
-        border: 4px solid #000000 !important;
-        border-radius: 16px !important;
-        padding: 14px 20px !important;
-        box-shadow: 4px 4px 0px #000000 !important;
-        width: 100% !important;
-        margin-top: 10px !important;
-    }
-    div.stButton > button:hover, div.stButton > button:active {
-        background-color: #FFD600 !important;
-        color: #000000 !important;
-    }
-
-    /* 側邊欄 Mobile 修復 */
+    /* 主介面文字 */
+    p, span, label, div, h1, h2, h3, h4 { color: #000000 !important; font-family: 'Comic Sans MS', sans-serif; }
+    .kids-title { font-size: 2.6rem !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; text-shadow: 2px 2px 0px #B2EBF2; }
+    .en-title { font-size: 1.8rem !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
+    .kids-sfx { font-size: 2rem !important; color: #E65100 !important; font-weight: 900; text-align: center; margin: 10px 0; }
+    .kids-speech-bubble { background: #FFFFFF; border: 5px solid #000000; border-radius: 25px; padding: 25px; margin: 15px 0; box-shadow: 8px 8px 0px #000000; }
+    .tc-story { font-size: 1.6rem !important; line-height: 1.6; font-weight: bold; margin-bottom: 15px; }
+    .en-story { font-size: 1.3rem !important; line-height: 1.5; color: #37474F !important; font-style: italic; }
+    
+    /* 💥 關鍵修復：側邊欄 (Sidebar) 文字與標題顏色 */
     [data-testid="stSidebar"] {
         background-color: #1E293B !important;
     }
@@ -120,22 +33,66 @@ st.markdown("""
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] h3 {
         color: #FFFFFF !important;
-        font-size: 1.2rem !important;
+        font-size: 1.3rem !important;
         font-weight: 900 !important;
     }
     [data-testid="stSidebar"] h2 {
         color: #FFEB3B !important;
-        font-size: 1.4rem !important;
+        font-size: 1.6rem !important;
     }
 
-    .comic-panel { 
-        background-color: #FFFFFF; 
-        border: 4px solid #000000; 
-        padding: 15px; 
-        margin-bottom: 15px; 
-        border-radius: 15px; 
-        box-shadow: 5px 5px 0px #FF9800; 
+    /* 💥 關鍵修復：Selectbox 下拉選單（強行設為白底黑字） */
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 3px solid #000000 !important;
+        border-radius: 12px !important;
+        font-weight: bold !important;
     }
+    div[data-baseweb="select"] span {
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+    ul[data-baseweb="menu"] {
+        background-color: #FFFFFF !important;
+    }
+    ul[data-baseweb="menu"] li {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
+        font-weight: bold !important;
+        font-size: 1.2rem !important;
+    }
+    ul[data-baseweb="menu"] li:hover {
+        background-color: #FFEB3B !important;
+        color: #000000 !important;
+    }
+
+    /* 修正 Radio 選項文字 */
+    .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
+    .stRadio { background-color: #FFFFFF; padding: 20px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
+    
+    /* 按鈕樣式：黃色醒目底色 + 黑色文字 */
+    div.stButton > button {
+        background-color: #FFEB3B !important;
+        color: #000000 !important;
+        font-size: 1.5rem !important;
+        font-weight: 900 !important;
+        border: 4px solid #000000 !important;
+        border-radius: 18px !important;
+        padding: 12px 24px !important;
+        box-shadow: 5px 5px 0px #000000 !important;
+        width: 100% !important;
+    }
+    div.stButton > button:hover {
+        background-color: #FFD600 !important;
+        color: #000000 !important;
+    }
+    div.stButton > button p {
+        color: #000000 !important;
+        font-weight: 900 !important;
+    }
+
+    .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
     </style>
 """, unsafe_allow_html=True)
 
