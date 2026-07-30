@@ -8,12 +8,40 @@ st.set_page_config(
     layout="centered"
 )
 
-# 自訂樣式美化
+# 自訂樣式美化（修正字體顏色與對比度）
 st.markdown("""
     <style>
-    .main-title { font-size: 2.2rem; color: #FF4B4B; font-weight: bold; text-align: center; }
-    .story-card { background-color: #f0f2f6; padding: 20px; border-radius: 10px; border-left: 5px solid #FF4B4B; margin-bottom: 20px; }
-    .choice-result { background-color: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid #1E88E5; }
+    .main-title { 
+        font-size: 2.2rem; 
+        color: #FF4B4B; 
+        font-weight: bold; 
+        text-align: center; 
+    }
+    .story-card { 
+        background-color: #F0F4F8; 
+        color: #1A1A1A !important; 
+        padding: 20px; 
+        border-radius: 12px; 
+        border-left: 6px solid #FF4B4B; 
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .story-card b, .story-card i {
+        color: #000000 !important;
+    }
+    .choice-result { 
+        background-color: #EBF3FA; 
+        color: #1A1A1A !important; 
+        padding: 20px; 
+        border-radius: 12px; 
+        border-left: 6px solid #1E88E5;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .choice-result b {
+        color: #000000 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
