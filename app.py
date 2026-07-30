@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🎨 雙語超大字體 CSS
+# 🎨 雙語超大字體 CSS (強行修正按鈕底色與字體顏色)
 st.markdown("""
     <style>
     .stApp { background-color: #E0F7FA; color: #000000 !important; }
@@ -18,8 +18,32 @@ st.markdown("""
     .kids-speech-bubble { background: #FFFFFF; border: 5px solid #000000; border-radius: 25px; padding: 25px; margin: 15px 0; box-shadow: 8px 8px 0px #000000; }
     .tc-story { font-size: 1.6rem !important; line-height: 1.6; font-weight: bold; margin-bottom: 15px; }
     .en-story { font-size: 1.3rem !important; line-height: 1.5; color: #37474F !important; font-style: italic; }
-    .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; padding: 8px 0; }
+    
+    /* 修正 Radio 選項文字 */
+    .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
     .stRadio { background-color: #FFFFFF; padding: 20px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
+    
+    /* 💥 關鍵修復：強行設定 Button 樣式 (亮黃色底 + 粗黑色字) */
+    div.stButton > button {
+        background-color: #FFEB3B !important;
+        color: #000000 !important;
+        font-size: 1.5rem !important;
+        font-weight: 900 !important;
+        border: 4px solid #000000 !important;
+        border-radius: 18px !important;
+        padding: 12px 24px !important;
+        box-shadow: 5px 5px 0px #000000 !important;
+        width: 100% !important;
+    }
+    div.stButton > button:hover {
+        background-color: #FFD600 !important;
+        color: #000000 !important;
+    }
+    div.stButton > button p {
+        color: #000000 !important;
+        font-weight: 900 !important;
+    }
+
     .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
     </style>
 """, unsafe_allow_html=True)
@@ -262,7 +286,7 @@ if current_step <= 6:
 
 else:
     st.balloons()
-    st.success("🎉 恭喜！Jarvis 成功解鎖了爆笑雙語結局！ Congratulations!")
+    st.success("🎉 恭喜！Jarvis 成功解锁了爆笑雙語結局！ Congratulations!")
     
     st.header("🖼️ Jarvis 的專屬雙語故事繪本 (My Bilingual Storybook)")
     
