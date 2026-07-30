@@ -1,271 +1,305 @@
 import streamlit as st
+from gtts import gTTS
+import io
 
 # 頁面配置
 st.set_page_config(
-    page_title="火鷹俠 Firebird Protection 2 | 恐龍島大冒險",
-    page_icon="🦕",
+    page_title="火鷹俠 1 | Firebird Protection",
+    page_icon="🦸‍♂️",
     layout="centered"
 )
 
-# 🎨 專為 6 歲設計的大字體與高對比 CSS
+# 🎨 雙語超大字體 CSS
 st.markdown("""
     <style>
-    .stApp {
-        background-color: #E8F5E9;
-        color: #000000 !important;
-    }
-    p, span, label, div, h1, h2, h3, h4 {
-        color: #000000 !important;
-        font-family: 'Comic Sans MS', 'Microsoft JhengHei', sans-serif;
-    }
-    .kids-title { 
-        font-size: 3rem !important; 
-        color: #2E7D32 !important; 
-        font-weight: 900; 
-        text-align: center; 
-        text-shadow: 3px 3px 0px #C8E6C9;
-        margin-bottom: 10px;
-    }
-    .kids-sfx {
-        font-size: 2.2rem !important;
-        color: #FF5722 !important;
-        font-weight: 900;
-        text-align: center;
-        margin: 15px 0;
-    }
-    .kids-speech-bubble {
-        background: #FFFFFF;
-        border: 5px solid #000000;
-        border-radius: 25px;
-        padding: 25px;
-        margin: 20px 0;
-        font-size: 1.6rem !important;
-        line-height: 1.8;
-        box-shadow: 8px 8px 0px #000000;
-    }
-    .stRadio label {
-        font-size: 1.5rem !important;
-        font-weight: bold !important;
-        padding: 10px 0;
-    }
-    .stRadio {
-        background-color: #FFFFFF;
-        padding: 20px;
-        border: 4px solid #000000;
-        border-radius: 20px;
-        box-shadow: 6px 6px 0px #000000;
-        margin-bottom: 20px;
-    }
-    .comic-panel {
-        background-color: #FFFFFF;
-        border: 5px solid #000000;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 15px;
-        box-shadow: 6px 6px 0px #81C784;
-    }
+    .stApp { background-color: #E0F7FA; color: #000000 !important; }
+    p, span, label, div, h1, h2, h3, h4 { color: #000000 !important; font-family: 'Comic Sans MS', sans-serif; }
+    .kids-title { font-size: 2.6rem !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; text-shadow: 2px 2px 0px #B2EBF2; }
+    .en-title { font-size: 1.8rem !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
+    .kids-sfx { font-size: 2rem !important; color: #E65100 !important; font-weight: 900; text-align: center; margin: 10px 0; }
+    .kids-speech-bubble { background: #FFFFFF; border: 5px solid #000000; border-radius: 25px; padding: 25px; margin: 15px 0; box-shadow: 8px 8px 0px #000000; }
+    .tc-story { font-size: 1.6rem !important; line-height: 1.6; font-weight: bold; margin-bottom: 15px; }
+    .en-story { font-size: 1.3rem !important; line-height: 1.5; color: #37474F !important; font-style: italic; }
+    .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; padding: 8px 0; }
+    .stRadio { background-color: #FFFFFF; padding: 20px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
+    .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
     </style>
 """, unsafe_allow_html=True)
 
-# 初始化遊戲狀態
+# 🔊 語音生成函數 (Text-to-Speech)
+def play_audio(text, lang='zh-TW'):
+    try:
+        tts = gTTS(text=text, lang=lang)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        st.audio(fp, format='audio/mp3')
+    except Exception as e:
+        st.error("語音讀取失敗，請確保已連接網絡。")
+
+# ----------------- 健康爆笑雙語 30 分支場景庫 -----------------
+SCENES = {
+    "1_START": {
+        "title_tc": "第 1 頁：玩具失竊大危機！",
+        "title_en": "Page 1: The Great Toy Crisis!",
+        "sfx": "🚨 嗚哇！WEE WOO!",
+        "story_tc": "大件事啦！「糖果外星人」偷走了全城小朋友最喜歡的玩具！火鷹俠必須去外星基地奪回玩具，他決定：",
+        "story_en": "Oh no! The 'Candy Aliens' stole all the kids' favorite toys! Firebird must get them back. He decides to:",
+        "choices": {
+            "A": "🚀 坐上「超級彩虹推進火箭」飛上太空！ (Ride the Super Rainbow Rocket!)", 
+            "B": "🦆 召喚一隻跟大廈一樣高的「超級黃色膠鴨」！ (Summon a building-sized Super Rubber Duck!)", 
+            "C": "📦 跳進神奇紙皮箱，變成宇宙飛船！ (Jump into a magic cardboard box spaceship!)"
+        }
+    },
+    
+    # Layer 2
+    "2_A": {
+        "title_tc": "第 2 頁：會飛的披薩隕石！",
+        "title_en": "Page 2: Flying Pizza Meteors!",
+        "sfx": "🍕 砰！BAM!",
+        "story_tc": "火箭飛到一半，遇到了一陣會飛的披薩隕石雨！",
+        "story_en": "Halfway to space, the rocket meets a storm of flying Pizza Meteors!",
+        "choices": {
+            "A": "🔥 噴出火鷹烈焰，把披薩烤成脆脆的餅乾！ (Use Firebird flames to bake them into crispy crackers!)", 
+            "B": "💦 拿出超級大水槍，用水把披薩沖走！ (Use a giant water gun to wash the pizzas away!)", 
+            "C": "🤤 張大嘴巴，一邊飛一邊把披薩全部吃掉！ (Open wide and EAT all the pizzas while flying!)"
+        }
+    },
+    "2_B": {
+        "title_tc": "第 2 頁：膠鴨大暴走！",
+        "title_en": "Page 2: Rubber Duck Rampage!",
+        "sfx": "🦆 呱呱！QUACK!",
+        "story_tc": "超級膠鴨太重了，結果一屁股壓扁了外星人的果凍飛船！",
+        "story_en": "The Super Rubber Duck is so heavy, it squashed the alien's jelly spaceship!",
+        "choices": {
+            "A": "💨 用力拍動翅膀，颳起大風吹走外星人！ (Flap wings hard to blow the aliens away!)", 
+            "B": "🕶️ 戴上超酷墨鏡，假裝什麼事都沒發生！ (Wear cool sunglasses and pretend nothing happened!)", 
+            "C": "🧴 噴出香噴噴的草莓香水讓外星人打噴嚏！ (Spray strawberry perfume to make them sneeze!)"
+        }
+    },
+    "2_C": {
+        "title_tc": "第 2 頁：紙皮箱裡的奇怪世界！",
+        "title_en": "Page 2: The Weird Cardboard World!",
+        "sfx": "📦 咻——！WHOOSH!",
+        "story_tc": "紙皮箱飛到了外星花園，這裡有一隻戴著耳機的巨大青蛙在跳 Disco 舞！",
+        "story_en": "The box lands in an alien garden. There is a giant frog wearing headphones dancing to Disco!",
+        "choices": {
+            "A": "🕺 跟青蛙一起跳舞，跳到牠頭暈！ (Dance with the frog until it gets dizzy!)", 
+            "B": "🎤 搶走青蛙的麥克風，唱出超級難聽的歌嚇跑牠！ (Steal the microphone and sing terribly to scare it!)", 
+            "C": "🪰 變出一隻超級大蒼蠅，讓青蛙追著蒼蠅跑！ (Create a giant fly so the frog chases it away!)"
+        }
+    },
+
+    # Layer 3
+    "3_A": {
+        "title_tc": "第 3 頁：外星人的巨型扭蛋機",
+        "title_en": "Page 3: The Giant Alien Capsule Machine",
+        "story_tc": "火鷹俠發現所有的玩具都被關在一個像山一樣大的扭蛋機裡！",
+        "story_en": "Firebird finds all the toys trapped inside a capsule machine as big as a mountain!",
+        "choices": {
+            "A": "🪙 變出一個超級巨大的硬幣投進去！ (Create a giant coin and put it in!)", 
+            "B": "🔨 拿出神奇充氣大錘子，把扭蛋機敲開！ (Use a magic inflatable hammer to crack it open!)", 
+            "C": "🤸‍♂️ 跳進扭蛋機裡，跟著玩具一起轉圈圈！ (Jump inside and spin around with the toys!)"
+        }
+    },
+    "3_B": {
+        "title_tc": "第 3 頁：黏呼呼棉花糖迷宮",
+        "title_en": "Page 3: The Sticky Marshmallow Maze",
+        "story_tc": "前面出現了一個白色的迷宮，牆壁居然是用黏黏的棉花糖做的！",
+        "story_en": "Ahead is a white maze. The walls are made of sticky marshmallows!",
+        "choices": {
+            "A": "🧊 吐出冷凍氣息，把棉花糖全部凍硬！ (Breathe freezing air to make the marshmallows hard!)", 
+            "B": "🧻 拿出一大卷超級保鮮紙，包住牆壁一路行！ (Take out giant plastic wrap to cover the walls!)", 
+            "C": "🛹 拿出一塊滑板，在黏黏的牆壁上滑行！ (Use a skateboard to slide on the sticky walls!)"
+        }
+    },
+    "3_C": {
+        "title_tc": "第 3 頁：肚餓的怪獸",
+        "title_en": "Page 3: The Hungry Monster",
+        "story_tc": "大門口有一隻長了三個頭的怪獸，牠們一邊流口水一邊大叫肚子餓！",
+        "story_en": "A three-headed monster is guarding the door, drooling and yelling that they are hungry!",
+        "choices": {
+            "A": "🥦 逼牠們吃最討厭的超級綠色西蘭花！ (Force them to eat the super green broccoli they hate!)", 
+            "B": "🍔 變出三個無敵大漢堡塞住牠們的嘴！ (Create 3 mega burgers to stuff their mouths!)", 
+            "C": "🤪 扮成一隻會跳舞的熱狗，把牠們引開！ (Dress up as a dancing hot dog and lure them away!)"
+        }
+    },
+
+    # Layer 4 
+    "4_A": {
+        "title_tc": "第 4 頁：糖果大王出現！",
+        "title_en": "Page 4: The Candy King Appears!",
+        "story_tc": "扭蛋機打開了，外星人的首領「糖果大王」出現！他居然穿著一套超搞笑的香蕉人衣服！",
+        "story_en": "The machine opens. The alien boss, 'Candy King', appears! He is wearing a hilarious banana suit!",
+        "choices": {
+            "A": "🤣 指著他的衣服哈哈大笑，笑到他覺得尷尬！ (Point at his suit and laugh so hard he blushes!)", 
+            "B": "📸 拿出相機拍下他的搞笑樣子，準備給所有人看！ (Take a picture of his funny look to show everyone!)", 
+            "C": "🍌 火鷹俠也變出一套蘋果人衣服，跟他進行「水果對決」！ (Firebird wears an apple suit for a fruit showdown!)"
+        }
+    },
+    "4_B": {
+        "title_tc": "第 4 頁：雪糕雪人軍團！",
+        "title_en": "Page 4: Ice Cream Snowman Army!",
+        "story_tc": "糖果大王揮揮手，召喚出 50 個用融化雪糕做的黏呼呼雪人來攻擊！",
+        "story_en": "The King waves his hand and summons 50 sticky snowmen made of melted ice cream to attack!",
+        "choices": {
+            "A": "🔥 開啟火鷹加熱器，把雪人全部融化成糖水！ (Turn on the Firebird Heater to melt them into syrup!)", 
+            "B": "🥄 拿出一支巨大的超級湯匙，把雪人全部吃光光！ (Take out a giant spoon and eat all the snowmen!)", 
+            "C": "🍒 在他們頭上放上櫻桃，把他們變成美味的甜品！ (Put cherries on their heads and turn them into nice desserts!)"
+        }
+    },
+    "4_C": {
+        "title_tc": "第 4 頁：滑溜溜溜冰場",
+        "title_en": "Page 4: The Slippery Ice Rink",
+        "story_tc": "地板上灑滿了香蕉皮，變得超級滑！糖果大王滑著太空步衝過來了！",
+        "story_en": "The floor is covered with banana peels, making it super slippery! The King moonwalks towards you!",
+        "choices": {
+            "A": "⛸️ 穿上火焰溜冰鞋，跟他比拼花式溜冰！ (Put on Flame Ice Skates and challenge him to figure skating!)", 
+            "B": "🧲 啟動鞋底的超級磁鐵，穩穩地站在地上！ (Activate super magnets in your shoes to stand firmly!)", 
+            "C": "🍌 踢出更多的香蕉皮，讓他滑個四腳朝天！ (Kick more banana peels so he slips and falls flat!)"
+        }
+    },
+
+    # Layer 5 (Ultimate Move 終極絕招)
+    "5_A": {
+        "title_tc": "第 5 頁：發動搞笑絕招！(魔法系)",
+        "title_en": "Page 5: Hilarious Ultimate Move! (Magic)",
+        "story_tc": "糖果大王跌倒了！火鷹俠準備發動最厲害的搞笑絕招來淨化他！",
+        "story_en": "The Candy King falls! Firebird gets ready to use his most hilarious ultimate move to purify him!",
+        "choices": {
+            "A": "🌈「—— 顏色沙漠土魔法 ！！！」 (Desert Sand of Color Magic!!!)", 
+            "B": "✨「—— 超級痕癢羽毛雨 ！！！」 (Super Itchy Feather Rain!!!)", 
+            "C": "🎈「—— 變成大氣球魔法 ！！！」 (Turn Into a Big Balloon Magic!!!)"
+        }
+    },
+    "5_B": {
+        "title_tc": "第 5 頁：發動搞笑絕招！(物理系)",
+        "title_en": "Page 5: Hilarious Ultimate Move! (Physical)",
+        "story_tc": "糖果大王逃不掉了！火鷹俠積蓄能量，大叫一聲使出絕招：",
+        "story_en": "The Candy King can't escape! Firebird charges up and shouts his ultimate move:",
+        "choices": {
+            "A": "🌈「—— 顏色沙漠土衝擊波 ！！！」 (Desert Sand of Color Shockwave!!!)", 
+            "B": "💨「—— 無敵超級大風吹 ！！！」 (Invincible Super Wind Blow!!!)", 
+            "C": "🥊「—— 搞笑百裂拳 ！！！」 (Hilarious Hundred Crack Fist!!!)"
+        }
+    },
+    "5_C": {
+        "title_tc": "第 5 頁：發動搞笑絕招！(食物系)",
+        "title_en": "Page 5: Hilarious Ultimate Move! (Food)",
+        "story_tc": "糖果大王舉手投降！火鷹俠決定請他吃一招美味的絕招：",
+        "story_en": "The Candy King surrenders! Firebird decides to serve him a delicious ultimate move:",
+        "choices": {
+            "A": "🌈「—— 顏色沙漠土蛋糕 ！！！」 (Desert Sand of Color Cake!!!)", 
+            "B": "🍔「—— 漢堡包大雪崩 ！！！」 (Hamburger Avalanche!!!)", 
+            "C": "🍕「—— 飛天披薩滿天飛 ！！！」 (Flying Pizzas Everywhere!!!)"
+        }
+    },
+
+    # Layer 6 (Ending)
+    "6_A": {
+        "title_tc": "第 6 頁：大結局！(彩色沙子結局)",
+        "title_en": "Page 6: The End! (Color Sand Ending)",
+        "story_tc": "絕招命中！外星人變成了五顏六色的沙子隨風飄走！所有玩具都安全找回來了，火鷹俠又拯救了世界！",
+        "story_en": "Direct hit! The alien turns into colorful sand and blows away! All toys are saved. Firebird saved the world again!",
+        "choices": {"A": "🎉 任務完成！帶著玩具去開派對！ (Mission Complete! Let's have a toy party!)"}
+    },
+    "6_B": {
+        "title_tc": "第 6 頁：大結局！(超大風吹結局)",
+        "title_en": "Page 6: The End! (Super Wind Ending)",
+        "story_tc": "超級大風把外星人直接吹飛到了太陽系外面！玩具都得救了！大家笑到流眼淚！",
+        "story_en": "The super wind blows the alien out of the solar system! Toys are saved! Everyone laughs until they cry!",
+        "choices": {"A": "🎉 任務完成！跟小動物一起跳舞！ (Mission Complete! Dance with the animals!)"}
+    },
+    "6_C": {
+        "title_tc": "第 6 頁：大結局！(肚皮脹脹結局)",
+        "title_en": "Page 6: The End! (Full Tummy Ending)",
+        "story_tc": "外星人吃到肚皮脹得像氣球，直接飄上了天空！大家拿回了玩具，還開了一個超級美食派對！",
+        "story_en": "The alien's tummy gets so full it floats into the sky like a balloon! Everyone gets their toys back and throws a food party!",
+        "choices": {"A": "🎉 任務完成！大家一齊食大餐！ (Mission Complete! Let's have a big feast!)"}
+    }
+}
+
+# ----------------- 引擎邏輯 -----------------
 if 'step' not in st.session_state:
     st.session_state.step = 1
 if 'story_history' not in st.session_state:
     st.session_state.story_history = []
-if 'last_choice' not in st.session_state:
-    st.session_state.last_choice = "START"
+if 'current_node' not in st.session_state:
+    st.session_state.current_node = "1_START"
 
-# 大標題
-st.markdown('<p class="kids-title">🦕 火鷹俠：恐龍島大冒險 🦕</p>', unsafe_allow_html=True)
-st.caption("第二集：專為 6 歲 Jarvis 設計的爆笑恐龍故事！")
+st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠 1：玩具星球大冒險 🦸‍♂️</p>', unsafe_allow_html=True)
+st.markdown('<p class="en-title">Firebird Protection 1: Toy Planet Adventure</p>', unsafe_allow_html=True)
+st.caption("雙語發聲版 | 為 Jarvis 量身打造的健康爆笑冒險")
 st.markdown("---")
 
-# ----------------- 全新恐龍島劇情 -----------------
-def get_dino_stage(step, last_choice):
-    if step == 1:
-        return {
-            "title": "第 1 頁：恐龍島的求救信！",
-            "sfx": "🚨 嗶嗶！有恐龍求救！",
-            "image": "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&auto=format&fit=crop",
-            "story": "火鷹俠正在總部吃早餐，突然收到一封來自「恐龍玩具島」的求救信！原來有外星人搗蛋，把恐龍們都變成了滑嘟嘟的果凍！火鷹俠決定出發：",
-            "choices": {
-                "A": "🚀 展開 Firebird 光影翅膀，用超音速飛過去！",
-                "B": "🚪 畫一道神奇的「多啦A夢式」隨意門，直接行過去！",
-                "C": " submarine 召喚火鷹潛水艇，潛入海底尋找恐龍島！"
-            }
-        }
-    
-    elif step == 2:
-        return {
-            "title": "第 2 頁：登陸果凍恐龍島！",
-            "sfx": "🌟 噗通！滑嘟嘟！",
-            "image": "https://images.unsplash.com/photo-1569588661601-523101eb66d5?w=800&auto=format&fit=crop",
-            "story": "到了恐龍島，火鷹俠發現四周圍都是粉紅色的香甜泡泡糖！一隻小三角龍被泡泡糖黏住了腳，急得哭了出來。火鷹俠要點樣幫佢？",
-            "choices": {
-                "A": "💦 噴出「火鷹溫泉水」，把甜甜的泡泡糖融化！",
-                "B": "🪶 用羽毛狂搔三角龍的腳底，讓他笑到把泡泡糖撐破！",
-                "C": "🎶 唱一首超級好聽的安眠曲，讓泡泡糖睡著變軟！"
-            }
-        }
-
-    elif step == 3:
-        return {
-            "title": "第 3 頁：遇見暴龍大王！",
-            "sfx": "🦖 吼——！我肚子餓！",
-            "image": "https://images.unsplash.com/photo-1596743344692-e4272186711c?w=800&auto=format&fit=crop",
-            "story": "三角龍得救了！這時，一隻超巨大的暴龍跑了過來。大家以為牠要生氣，結果牠是在哭訴：「搗蛋外星人搶了我的超級大漢堡！」",
-            "choices": {
-                "A": "🍔 火鷹俠立刻用手環變出一個更大的「火鷹特製熱狗」請牠吃！",
-                "B": "🧸 送給暴龍一隻可愛的火鷹俠毛公仔，哄牠開心！",
-                "C": "🤝 拍拍暴龍的膝蓋說：「別哭！我們一起去把漢堡搶回來！」"
-            }
-        }
-
-    elif step == 4:
-        return {
-            "title": "第 4 頁：搗蛋外星人出現！",
-            "sfx": "👽 嘻嘻哈哈！嗶啵！",
-            "image": "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=800&auto=format&fit=crop",
-            "story": "暴龍決定加入火鷹俠小隊！他們在火山口找到了「泡泡糖外星人」，他正坐在一架飛碟上向下面扔果凍炸彈！",
-            "choices": {
-                "A": "🛡️ 舉起「火鷹巨型防護罩」，把果凍炸彈全部彈飛！",
-                "B": "🏸 拿出超級大羽毛球拍，把果凍炸彈當羽毛球打回去！",
-                "C": "💨 飛上天用嘴巴吹出超級大風，把炸彈吹回太空！"
-            }
-        }
-
-    elif step == 5:
-        return {
-            "title": "第 5 頁：外星人的大軍！",
-            "sfx": "🤖 咔嚓咔嚓！果凍機器人！",
-            "image": "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=800&auto=format&fit=crop",
-            "story": "外星人生氣了，變出了 50 隻會跳舞的「果凍機器人」包圍過來！機器人一邊跳舞一邊噴出黏黏的汽水！",
-            "choices": {
-                "A": "🧊 吐出「草莓冰淇淋氣息」，把機器人全部凍成冰棒！",
-                "B": "🦖 叫暴龍大王出來，一腳把機器人踩成扁扁的鬆餅！",
-                "C": "💃 跟機器人比拼跳街舞，跳到機器人全部頭暈跌倒！"
-            }
-        }
-
-    elif step == 6:
-        return {
-            "title": "第 6 頁：超級恐龍合體！",
-            "sfx": "✨ 閃閃發光！超帥氣！",
-            "image": "https://images.unsplash.com/photo-1519098901909-b1553a1190af?w=800&auto=format&fit=crop",
-            "story": "機器人被打敗了！外星人想開著飛碟逃跑。火鷹俠決定跟暴龍大王發動史無前例的「超級合體」去追他！",
-            "choices": {
-                "A": "🦖 騎在暴龍背上，給暴龍裝上 Firebird 火焰翅膀一起飛！",
-                "B": "🤝 火鷹俠與暴龍手牽手，發射出「友誼大光波」！",
-                "C": "🎩 給暴龍戴上神奇放大帽，讓暴龍變得比火山還要高！"
-            }
-        }
-
-    elif step == 7:
-        return {
-            "title": "第 7 頁：追上外星飛碟！",
-            "sfx": "🚀 嗖——！哪裡跑！",
-            "image": "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=800&auto=format&fit=crop",
-            "story": "合體後的【暴龍火鷹俠】速度超快，一下子就追上了外星人的飛碟！外星人嚇得按下了飛碟的「超級加速按鈕」！",
-            "choices": {
-                "A": "🕸️ 扔出一個超級巨大的棉花糖網，把飛碟網住！",
-                "B": "🪶 用最快的速度飛到飛碟下面，給飛碟的引擎搔癢！",
-                "C": "🛑 大喊一聲「紅燈停！」，用超能力讓飛碟急剎車！"
-            }
-        }
-
-    elif step == 8:
-        return {
-            "title": "第 8 頁：發動終極絕招！",
-            "sfx": "🌈 準備好啦！一、二、三！",
-            "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop",
-            "story": "飛碟停下來了！泡泡糖外星人舉手投降。火鷹俠決定用一招超級善良的絕招來淨化他！",
-            "choices": {
-                "A": "🌈「—— 彩虹泡泡衝擊波 ！！！」（把飛碟變成巨大的泡泡）",
-                "B": "✨「—— 閃亮亮星星粉 ！！！」（讓外星人變成可愛的小精靈）",
-                "C": "🍩「—— 超級甜甜圈抱抱 ！！！」（給外星人一個溫暖的擁抱）"
-            }
-        }
-
-    elif step == 9:
-        return {
-            "title": "第 9 頁：外星人變乖了！",
-            "sfx": "🎉 耶！交到新朋友！",
-            "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
-            "story": "絕招發射！外星人身上的搗蛋病毒全沒了，變成了一個友善的彩色小圓球！他把漢堡還給了暴龍，還保證以後只做好事！",
-            "choices": {
-                "A": "🎺 恐龍島舉辦了一場超級歡樂的「漢堡果凍派對」！",
-                "B": "🛸 讓外星人開飛碟帶大家去太空看流星雨！",
-                "C": "📸 暴龍、外星人和火鷹俠一起拍了一張搞笑大合照！"
-            }
-        }
-
-    else:
-        return {
-            "title": "第 10 頁：恐龍島英雄！",
-            "sfx": "🏆 暴龍大王說謝謝！",
-            "image": "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&auto=format&fit=crop",
-            "story": "火鷹俠再次成功拯救了世界！恐龍們為 Jarvis 送上了一個「黃金恐龍蛋」獎盃！Jarvis 對著大家說：",
-            "choices": {
-                "A": "💬「只要有 Firebird Protection，恐龍和人類都是好朋友！」",
-                "B": "💬「外星人不可怕，只要我們勇敢又善良！」",
-                "C": "💬「今天的漢堡真好吃！下一集冒險再見囉！」"
-            }
-        }
-
-# ----------------- 遊戲流程控制 -----------------
 current_step = st.session_state.step
+node_key = st.session_state.current_node
 
-if current_step <= 10:
-    stage = get_dino_stage(current_step, st.session_state.last_choice)
+if current_step <= 6:
+    stage = SCENES.get(node_key)
     
-    st.progress(current_step / 10, text=f"📖 故事進度：第 {current_step} / 10 頁")
+    if not stage:
+        node_key = f"{current_step}_A"
+        stage = SCENES[node_key]
+        
+    st.progress(current_step / 6, text=f"📖 故事進度 Story Progress：{current_step} / 6")
     
-    st.markdown(f'<p class="kids-sfx">{stage["title"]}</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="kids-sfx">{stage["sfx"]}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="kids-sfx">{stage["title_tc"]}<br><span style="font-size:1.2rem;">{stage["title_en"]}</span></p>', unsafe_allow_html=True)
+    if "sfx" in stage:
+        st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
     
-    # 顯示高畫質清晰圖片
-    st.image(stage["image"], use_column_width=True)
-    
-    # 超大字對話框
+    # 🔊 TTS 發聲按鈕
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🔊 聽中文故事 (Listen in Chinese)", key=f"tts_tc_{current_step}"):
+            play_audio(stage["story_tc"], lang='zh-TW')
+    with col2:
+        if st.button("🔊 聽英文故事 (Listen in English)", key=f"tts_en_{current_step}"):
+            play_audio(stage["story_en"], lang='en')
+
     st.markdown(f"""
     <div class="kids-speech-bubble">
-    💬 <b>【故事內容】：</b><br>{stage["story"]}
+    <p class="tc-story">💬 {stage["story_tc"]}</p>
+    <p class="en-story">{stage["story_en"]}</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # 選項
-    option_keys = list(stage["choices"].keys())
-    option_texts = [f"{k}. {stage['choices'][k]}" for k in option_keys]
-    
-    selected_text = st.radio("👉 請 Jarvis 做出選擇：", option_texts, key=f"radio_dino_{current_step}")
-    
-    if st.button("🔥 確定！翻去下一頁故事！"):
-        st.session_state.story_history.append((stage["title"], selected_text))
-        st.session_state.last_choice = selected_text
-        st.session_state.step += 1
-        st.rerun()
+    if current_step < 6:
+        option_keys = list(stage["choices"].keys())
+        option_texts = [f"{k}. {stage['choices'][k]}" for k in option_keys]
+        
+        selected_text = st.radio("👉 請 Jarvis 做出超搞笑抉擇 (Choose your action):", option_texts, key=f"radio_{current_step}")
+        selected_letter = selected_text[0] 
+        
+        if st.button("🔥 確定！翻去下一頁！ (Next Page!)"):
+            st.session_state.story_history.append((stage["title_tc"], selected_text))
+            st.session_state.step += 1
+            st.session_state.current_node = f"{st.session_state.step}_{selected_letter}"
+            st.rerun()
+    else:
+        if st.button("🎉 看完了！印出專屬雙語故事書！ (Print Storybook!)"):
+            st.session_state.story_history.append((stage["title_tc"], "故事圓滿結束！ The End!"))
+            st.session_state.step += 1
+            st.rerun()
 
 else:
-    # 繪本 Print 版
     st.balloons()
-    st.success("🎉 恭喜！Jarvis 成功完成了《火鷹俠 2：恐龍島大冒險》！")
+    st.success("🎉 恭喜！Jarvis 成功解鎖了爆笑雙語結局！ Congratulations!")
     
-    st.header("🖼️ Jarvis 的專屬《火鷹俠》恐龍繪本")
+    st.header("🖼️ Jarvis 的專屬雙語故事繪本 (My Bilingual Storybook)")
     
     for i, (title, choice) in enumerate(st.session_state.story_history, 1):
         st.markdown(f"""
         <div class="comic-panel">
-        <h2 style="font-size: 1.8rem; color: #2E7D32;">📖 第 {i} 頁：{title}</h2>
-        <p style="font-size: 1.5rem; color: #000000; font-weight: bold;"><b>💥 Jarvis 的選擇：</b><br>{choice}</p>
+        <h2 style="font-size: 1.6rem; color: #00838F;">📖 {title}</h2>
+        <p style="font-size: 1.3rem; color: #000000; font-weight: bold;"><b>💥 Jarvis 的行動 (Action)：</b><br>{choice}</p>
         </div>
         """, unsafe_allow_html=True)
         
-    if st.button("🔄 重新再玩一次恐龍島"):
+    if st.button("🔄 再玩一次！探索其他結局！ (Play Again!)"):
         st.session_state.step = 1
         st.session_state.story_history = []
-        st.session_state.last_choice = "START"
+        st.session_state.current_node = "1_START"
         st.rerun()
 
-# 頁尾
 st.markdown("---")
-st.caption("🔥 Firebird Protection Kids App 2 | Jarvis & 爸爸 專屬創作")
+st.caption("🔥 Firebird Protection App 1 | Jarvis & Daddy Exclusive 雙語發聲版")
