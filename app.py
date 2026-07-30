@@ -22,7 +22,7 @@ st.markdown("""
     .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
     .stRadio { background-color: #FFFFFF; padding: 20px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
     
-    /* 💥 關鍵修復：黃色醒目按鈕 + 黑色文字 */
+    /* 按鈕樣式：黃色醒目底色 + 黑色文字 */
     div.stButton > button {
         background-color: #FFEB3B !important;
         color: #000000 !important;
@@ -53,7 +53,7 @@ SCENES = {
         "title_tc": "第 1 頁：玩具失竊大危機！",
         "title_en": "Page 1: The Great Toy Crisis!",
         "sfx": "🚨 嗚哇！WEE WOO!",
-        "image": "https://images.pexels.com/photos/168866/pexels-photo-168866.jpeg?auto=compress&cs=tinysrgb&w=800", # 玩具王國
+        "image": "https://images.pexels.com/photos/168866/pexels-photo-168866.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "大件事啦！「糖果外星人」偷走了全城小朋友最喜歡的玩具！火鷹俠必須去外星基地奪回玩具，他決定：",
         "story_en": "Oh no! The 'Candy Aliens' stole all the kids' favorite toys! Firebird must get them back. He decides to:",
         "choices": {
@@ -68,7 +68,7 @@ SCENES = {
         "title_tc": "第 2 頁：會飛的披薩隕石！",
         "title_en": "Page 2: Flying Pizza Meteors!",
         "sfx": "🍕 砰！BAM!",
-        "image": "https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg?auto=compress&cs=tinysrgb&w=800", # 披薩
+        "image": "https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "火箭飛到一半，遇到了一陣會飛的披薩隕石雨！",
         "story_en": "Halfway to space, the rocket meets a storm of flying Pizza Meteors!",
         "choices": {
@@ -81,7 +81,7 @@ SCENES = {
         "title_tc": "第 2 頁：膠鴨大暴走！",
         "title_en": "Page 2: Rubber Duck Rampage!",
         "sfx": "🦆 呱呱！QUACK!",
-        "image": "https://images.pexels.com/photos/1321151/pexels-photo-1321151.jpeg?auto=compress&cs=tinysrgb&w=800", # 黃色小鴨
+        "image": "https://images.pexels.com/photos/1321151/pexels-photo-1321151.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "超級膠鴨太重了，結果一屁股壓扁了外星人的果凍飛船！",
         "story_en": "The Super Rubber Duck is so heavy, it squashed the alien's jelly spaceship!",
         "choices": {
@@ -94,7 +94,7 @@ SCENES = {
         "title_tc": "第 2 頁：紙皮箱裡的奇怪世界！",
         "title_en": "Page 2: The Weird Cardboard World!",
         "sfx": "📦 咻——！WHOOSH!",
-        "image": "https://images.pexels.com/photos/70083/frog-macro-amphibian-green-70083.jpeg?auto=compress&cs=tinysrgb&w=800", # 青蛙
+        "image": "https://images.pexels.com/photos/70083/frog-macro-amphibian-green-70083.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "紙皮箱飛到了外星花園，這裡有一隻戴著耳機的巨大青蛙在跳 Disco 舞！",
         "story_en": "The box lands in an alien garden. There is a giant frog wearing headphones dancing to Disco!",
         "choices": {
@@ -109,7 +109,7 @@ SCENES = {
         "title_tc": "第 3 頁：外星人的巨型扭蛋機",
         "title_en": "Page 3: The Giant Alien Capsule Machine",
         "sfx": "🎰 叮噹！DING DONG!",
-        "image": "https://images.pexels.com/photos/163036/mario-luigi-yoshi-figures-163036.jpeg?auto=compress&cs=tinysrgb&w=800", # 公仔玩具
+        "image": "https://images.pexels.com/photos/163036/mario-luigi-yoshi-figures-163036.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "火鷹俠發現所有的玩具都被關在一個像山一樣大的扭蛋機裡！",
         "story_en": "Firebird finds all the toys trapped inside a capsule machine as big as a mountain!",
         "choices": {
@@ -122,7 +122,7 @@ SCENES = {
         "title_tc": "第 3 頁：黏呼呼棉花糖迷宮",
         "title_en": "Page 3: The Sticky Marshmallow Maze",
         "sfx": "🍬 咕嚕！GLUG!",
-        "image": "https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=800", # 棉花糖
+        "image": "https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "前面出現了一個白色的迷宮，牆壁居然是用黏黏的棉花糖做的！",
         "story_en": "Ahead is a white maze. The walls are made of sticky marshmallows!",
         "choices": {
@@ -135,7 +135,7 @@ SCENES = {
         "title_tc": "第 3 頁：肚餓的怪獸",
         "title_en": "Page 3: The Hungry Monster",
         "sfx": "🍔 嗷嗚！NOM NOM!",
-        "image": "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=800", # 美味漢堡
+        "image": "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "大門口有一隻長了三個頭的怪獸，牠們一邊流口水一邊大叫肚子餓！",
         "story_en": "A three-headed monster is guarding the door, drooling and yelling that they are hungry!",
         "choices": {
@@ -150,7 +150,7 @@ SCENES = {
         "title_tc": "第 4 頁：糖果大王出現！",
         "title_en": "Page 4: The Candy King Appears!",
         "sfx": "🍌 哈哈！HAHA!",
-        "image": "https://images.pexels.com/photos/2872755/pexels-photo-2872755.jpeg?auto=compress&cs=tinysrgb&w=800", # 香蕉人造型
+        "image": "https://images.pexels.com/photos/2872755/pexels-photo-2872755.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "扭蛋機打開了，外星人的首領「糖果大王」出現！他居然穿著一套超搞笑的香蕉人衣服！",
         "story_en": "The machine opens. The alien boss, 'Candy King', appears! He is wearing a hilarious banana suit!",
         "choices": {
@@ -163,7 +163,7 @@ SCENES = {
         "title_tc": "第 4 頁：雪糕雪人軍團！",
         "title_en": "Page 4: Ice Cream Snowman Army!",
         "sfx": "🍦 呼呼！BRRR!",
-        "image": "https://images.pexels.com/photos/1362534/pexels-photo-1362534.jpeg?auto=compress&cs=tinysrgb&w=800", # 多彩雪糕
+        "image": "https://images.pexels.com/photos/1362534/pexels-photo-1362534.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "糖果大王揮揮手，召喚出 50 個用融化雪糕做的黏呼呼雪人來攻擊！",
         "story_en": "The King waves his hand and summons 50 sticky snowmen made of melted ice cream to attack!",
         "choices": {
@@ -176,7 +176,7 @@ SCENES = {
         "title_tc": "第 4 頁：滑溜溜溜冰場",
         "title_en": "Page 4: The Slippery Ice Rink",
         "sfx": "🍌 哎呀！WHOOPS!",
-        "image": "https://images.pexels.com/photos/1093837/pexels-photo-1093837.jpeg?auto=compress&cs=tinysrgb&w=800", # 香蕉皮
+        "image": "https://images.pexels.com/photos/1093837/pexels-photo-1093837.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "地板上灑滿了香蕉皮，變得超級滑！糖果大王滑著太空步衝過來了！",
         "story_en": "The floor is covered with banana peels, making it super slippery! The King moonwalks towards you!",
         "choices": {
@@ -186,12 +186,12 @@ SCENES = {
         }
     },
 
-    # Layer 5 (新增圖片)
+    # Layer 5
     "5_A": {
         "title_tc": "第 5 頁：發動搞笑絕招！(魔法系)",
         "title_en": "Page 5: Hilarious Ultimate Move! (Magic)",
         "sfx": "✨ 閃閃！SPARKLE!",
-        "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop", # 魔幻光芒
+        "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop",
         "story_tc": "糖果大王跌倒了！火鷹俠準備發動最厲害的搞笑絕招來淨化他！",
         "story_en": "The Candy King falls! Firebird gets ready to use his most hilarious ultimate move to purify him!",
         "choices": {
@@ -204,7 +204,7 @@ SCENES = {
         "title_tc": "第 5 頁：發動搞笑絕招！(物理系)",
         "title_en": "Page 5: Hilarious Ultimate Move! (Physical)",
         "sfx": "💨 咻——！BOOM!",
-        "image": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=800&auto=format&fit=crop", # 能量爆炸
+        "image": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=800&auto=format&fit=crop",
         "story_tc": "糖果大王逃不掉了！火鷹俠積蓄能量，大叫一聲使出絕招：",
         "story_en": "The Candy King can't escape! Firebird charges up and shouts his ultimate move:",
         "choices": {
@@ -217,7 +217,7 @@ SCENES = {
         "title_tc": "第 5 頁：發動搞笑絕招！(食物系)",
         "title_en": "Page 5: Hilarious Ultimate Move! (Food)",
         "sfx": "🍰 咕嚕！YUMMY!",
-        "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&auto=format&fit=crop", # 美味蛋糕
+        "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&auto=format&fit=crop",
         "story_tc": "糖果大王舉手投降！火鷹俠決定請他吃一招美味的絕招：",
         "story_en": "The Candy King surrenders! Firebird decides to serve him a delicious ultimate move:",
         "choices": {
@@ -227,12 +227,12 @@ SCENES = {
         }
     },
 
-    # Layer 6 (新增圖片)
+    # Layer 6
     "6_A": {
         "title_tc": "第 6 頁：大結局！(彩色沙子結局)",
         "title_en": "Page 6: The End! (Color Sand Ending)",
         "sfx": "🎉 耶！HOORAY!",
-        "image": "https://images.pexels.com/photos/1078850/pexels-photo-1078850.jpeg?auto=compress&cs=tinysrgb&w=800", # 彩色沙粉
+        "image": "https://images.pexels.com/photos/1078850/pexels-photo-1078850.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "絕招命中！外星人變成了五顏六色的沙子隨風飄走！所有玩具都安全找回來了，火鷹俠又拯救了世界！",
         "story_en": "Direct hit! The alien turns into colorful sand and blows away! All toys are saved. Firebird saved the world again!",
         "choices": {"A": "🎉 任務完成！帶著玩具去開派對！ (Mission Complete! Let's have a toy party!)"}
@@ -241,7 +241,7 @@ SCENES = {
         "title_tc": "第 6 頁：大結局！(超大風吹結局)",
         "title_en": "Page 6: The End! (Super Wind Ending)",
         "sfx": "🌬️ 吹走啦！BYE BYE!",
-        "image": "https://images.pexels.com/photos/1563256/pexels-photo-1563256.jpeg?auto=compress&cs=tinysrgb&w=800", # 太空星雲
+        "image": "https://images.pexels.com/photos/1563256/pexels-photo-1563256.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "超級大風把外星人直接吹飛到了太陽系外面！玩具都得救了！大家笑到流眼淚！",
         "story_en": "The super wind blows the alien out of the solar system! Toys are saved! Everyone laughs until they cry!",
         "choices": {"A": "🎉 任務完成！跟小動物一起跳舞！ (Mission Complete! Dance with the animals!)"}
@@ -250,7 +250,7 @@ SCENES = {
         "title_tc": "第 6 頁：大結局！(肚皮脹脹結局)",
         "title_en": "Page 6: The End! (Full Tummy Ending)",
         "sfx": "🎈 飄上天！FLOATING!",
-        "image": "https://images.pexels.com/photos/1543762/pexels-photo-1543762.jpeg?auto=compress&cs=tinysrgb&w=800", # 彩色氣球派對
+        "image": "https://images.pexels.com/photos/1543762/pexels-photo-1543762.jpeg?auto=compress&cs=tinysrgb&w=800",
         "story_tc": "外星人吃到肚皮脹得像氣球，直接飄上了天空！大家拿回了玩具，還開了一個超級美食派對！",
         "story_en": "The alien's tummy gets so full it floats into the sky like a balloon! Everyone gets their toys back and throws a food party!",
         "choices": {"A": "🎉 任務完成！大家一齊食大餐！ (Mission Complete! Let's have a big feast!)"}
@@ -265,9 +265,38 @@ if 'story_history' not in st.session_state:
 if 'current_node' not in st.session_state:
     st.session_state.current_node = "1_START"
 
+# 🚩 側邊欄（Sidebar）：快速跳頁功能
+st.sidebar.header("📖 快速跳轉選頁 (Jump to Page)")
+page_options = {
+    1: "第 1 頁：玩具失竊大危機",
+    2: "第 2 頁：太空途中冒險",
+    3: "第 3 頁：進入外星基地",
+    4: "第 4 頁：對決糖果大王",
+    5: "第 5 頁：發動搞笑絕招",
+    6: "第 6 頁：大結局"
+}
+
+jump_page = st.sidebar.selectbox("選擇想看的頁數：", list(page_options.keys()), format_func=lambda x: page_options[x], index=st.session_state.step - 1)
+
+if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
+    st.session_state.step = jump_page
+    if jump_page == 1:
+        st.session_state.current_node = "1_START"
+    else:
+        st.session_state.current_node = f"{jump_page}_A"
+    st.rerun()
+
+st.sidebar.markdown("---")
+if st.sidebar.button("🔄 重新回到第 1 頁"):
+    st.session_state.step = 1
+    st.session_state.story_history = []
+    st.session_state.current_node = "1_START"
+    st.rerun()
+
+# 主介面
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠 1：玩具星球大冒險 🦸‍♂️</p>', unsafe_allow_html=True)
 st.markdown('<p class="en-title">Firebird Protection 1: Toy Planet Adventure</p>', unsafe_allow_html=True)
-st.caption("為 Jarvis 量身打造的健康爆笑雙語繪本")
+st.caption("Son & Dad Exclusive | 雙語爆笑繪本 App")
 st.markdown("---")
 
 current_step = st.session_state.step
@@ -286,7 +315,6 @@ if current_step <= 6:
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
 
-    # 顯示 100% 匹配的專屬相片
     if "image" in stage:
         st.image(stage["image"], use_column_width=True)
 
@@ -301,7 +329,7 @@ if current_step <= 6:
         option_keys = list(stage["choices"].keys())
         option_texts = [f"{k}. {stage['choices'][k]}" for k in option_keys]
         
-        selected_text = st.radio("👉 請 Jarvis 做出超搞笑抉擇 (Choose your action):", option_texts, key=f"radio_{current_step}")
+        selected_text = st.radio("👉 請做出超搞笑抉擇 (Choose your action):", option_texts, key=f"radio_{current_step}")
         selected_letter = selected_text[0] 
         
         if st.button("🔥 確定！翻去下一頁！ (Next Page!)"):
@@ -317,15 +345,15 @@ if current_step <= 6:
 
 else:
     st.balloons()
-    st.success("🎉 恭喜！Jarvis 成功解鎖了爆笑雙語結局！ Congratulations!")
+    st.success("🎉 恭喜！成功解鎖了爆笑雙語結局！ Congratulations!")
     
-    st.header("🖼️ Jarvis 的專屬雙語故事繪本 (My Bilingual Storybook)")
+    st.header("🖼️ 專屬雙語故事繪本 (Our Bilingual Storybook)")
     
     for i, (title, choice) in enumerate(st.session_state.story_history, 1):
         st.markdown(f"""
         <div class="comic-panel">
         <h2 style="font-size: 1.6rem; color: #00838F;">📖 {title}</h2>
-        <p style="font-size: 1.3rem; color: #000000; font-weight: bold;"><b>💥 Jarvis 的行動 (Action)：</b><br>{choice}</p>
+        <p style="font-size: 1.3rem; color: #000000; font-weight: bold;"><b>💥 我們的行動 (Action)：</b><br>{choice}</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -336,4 +364,4 @@ else:
         st.rerun()
 
 st.markdown("---")
-st.caption("🔥 Firebird Protection App 1 | Jarvis & Daddy Exclusive 雙語純淨版")
+st.caption("🔥 Firebird Protection App 1 | Son & Dad Exclusive 雙語純淨版")
