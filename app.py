@@ -31,8 +31,8 @@ st.markdown("""
         font-size: 1.5rem !important;
     }
     [data-testid="stSidebar"] label p {
-        color: #000000 !important; /* 修正側邊欄選單文字為純黑色 */
-        font-size: 1.1rem !important;
+        color: #000000 !important; /* 側邊欄選單文字為純黑色 */
+        font-size: 1.05rem !important;
         font-weight: 900 !important;
     }
 
@@ -45,11 +45,11 @@ st.markdown("""
     div.stButton > button {
         background-color: #FFEB3B !important;
         color: #000000 !important;
-        font-size: 1.5rem !important;
+        font-size: 1.4rem !important;
         font-weight: 900 !important;
         border: 4px solid #000000 !important;
         border-radius: 18px !important;
-        padding: 12px 24px !important;
+        padding: 12px 20px !important;
         box-shadow: 5px 5px 0px #000000 !important;
         width: 100% !important;
     }
@@ -284,19 +284,19 @@ if 'story_history' not in st.session_state:
 if 'current_node' not in st.session_state:
     st.session_state.current_node = "1_START"
 
-# 🚩 側邊欄（Sidebar）：跳頁 Radio 選單
-st.sidebar.markdown("## 📖 快速跳轉選頁")
+# 🚩 側邊欄（Sidebar）：全中英雙語化
+st.sidebar.markdown("## 📖 快速跳頁 (Jump to Page)")
 page_options = [
-    "第 1 頁：玩具失竊大危機",
-    "第 2 頁：太空途中冒險",
-    "第 3 頁：進入外星基地",
-    "第 4 頁：對決糖果大王",
-    "第 5 頁：發動搞笑絕招",
-    "第 6 頁：大結局"
+    "第 1 頁：玩具危機 (Page 1: Toy Crisis)",
+    "第 2 頁：太空冒險 (Page 2: Space Adventure)",
+    "第 3 頁：外星基地 (Page 3: Alien Base)",
+    "第 4 頁：糖果大王 (Page 4: Candy King)",
+    "第 5 頁：搞笑絕招 (Page 5: Ultimate Move)",
+    "第 6 頁：大結局 (Page 6: The End)"
 ]
 
 selected_page_str = st.sidebar.radio(
-    "選擇頁數：", 
+    "選擇頁數 (Select Page)：", 
     page_options, 
     index=st.session_state.step - 1,
     key="sidebar_jump_radio"
@@ -313,7 +313,7 @@ if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
     st.rerun()
 
 st.sidebar.markdown("---")
-if st.sidebar.button("🔄 重新回到第 1 頁"):
+if st.sidebar.button("🔄 回到第 1 頁 (Back to Page 1)"):
     st.session_state.step = 1
     st.session_state.story_history = []
     st.session_state.current_node = "1_START"
@@ -322,7 +322,7 @@ if st.sidebar.button("🔄 重新回到第 1 頁"):
 # 主介面
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠 1：玩具星球大冒險 🦸‍♂️</p>', unsafe_allow_html=True)
 st.markdown('<p class="en-title">Firebird Protection 1: Toy Planet Adventure</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 雙語爆笑繪本 App")
+st.caption("Son & Dad Exclusive | 雙語爆笑繪本 App (Bilingual Comic App)")
 st.markdown("---")
 
 current_step = st.session_state.step
