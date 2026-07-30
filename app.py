@@ -22,30 +22,25 @@ st.markdown("""
     .tc-story { font-size: 1.6rem !important; line-height: 1.6; font-weight: bold; margin-bottom: 15px; }
     .en-story { font-size: 1.3rem !important; line-height: 1.5; color: #37474F !important; font-style: italic; }
     
-    /* 💥 側邊欄 (Sidebar) 樣式修復 */
+    /* 💥 側邊欄 (Sidebar) 背景與標題修復 */
     [data-testid="stSidebar"] {
         background-color: #1E293B !important;
-    }
-    [data-testid="stSidebar"] p, 
-    [data-testid="stSidebar"] span, 
-    [data-testid="stSidebar"] label, 
-    [data-testid="stSidebar"] div,
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] h3 {
-        color: #FFFFFF !important;
-        font-size: 1.2rem !important;
-        font-weight: 900 !important;
     }
     [data-testid="stSidebar"] h2 {
         color: #FFEB3B !important;
         font-size: 1.5rem !important;
     }
+    [data-testid="stSidebar"] label p {
+        color: #000000 !important; /* 修正側邊欄選單文字為純黑色 */
+        font-size: 1.1rem !important;
+        font-weight: 900 !important;
+    }
 
-    /* 主介面 Radio 選項 */
+    /* Radio 選項樣式（主介面與側邊欄通用：白底黑字） */
     .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
-    .stRadio { background-color: #FFFFFF; padding: 20px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
-    
+    .stRadio { background-color: #FFFFFF; padding: 15px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
+    .stRadio p { color: #000000 !important; }
+
     /* 按鈕樣式：黃色醒目底色 + 黑色文字 */
     div.stButton > button {
         background-color: #FFEB3B !important;
@@ -289,7 +284,7 @@ if 'story_history' not in st.session_state:
 if 'current_node' not in st.session_state:
     st.session_state.current_node = "1_START"
 
-# 🚩 側邊欄（Sidebar）：改用絕對不會隱形的 Radio 單選選單
+# 🚩 側邊欄（Sidebar）：跳頁 Radio 選單
 st.sidebar.markdown("## 📖 快速跳轉選頁")
 page_options = [
     "第 1 頁：玩具失竊大危機",
@@ -301,13 +296,12 @@ page_options = [
 ]
 
 selected_page_str = st.sidebar.radio(
-    "請選擇想看的頁數：", 
+    "選擇頁數：", 
     page_options, 
     index=st.session_state.step - 1,
     key="sidebar_jump_radio"
 )
 
-# 算出對應的頁碼 (1-6)
 jump_page_num = page_options.index(selected_page_str) + 1
 
 if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
