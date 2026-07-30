@@ -142,14 +142,17 @@ if not engine.is_ending():
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
 
-    # 💥 徹底修復：穩定的單圖與多圖渲染邏輯
-    if "images" in stage and isinstance(stage["images"], list):
-        cols = st.columns(len(stage["images"]))
-        for idx, img_url in enumerate(stage["images"]):
-            with cols[idx]:
-                st.image(img_url, use_column_width=True)
-    elif "image" in stage and stage["image"]:
-        st.image(stage["image"], use_column_width=True)
+    # 💥 終極關鍵修復：嚴謹區分「多圖陣列 list」與「單圖字串 str」
+    try:
+        if "images" in stage and isinstance(stage["images"], list) and len(stage["images"]) > 0:
+            cols = st.columns(len(stage["images"]))
+            for idx, img_url in enumerate(stage["images"]):
+                if isinstance(img_url, str):
+                    cols[idx].image(img_url, use_container_width=True)
+        elif "image" in stage and isinstance(stage["image"], str):
+            st.image(stage["image"], use_container_width=True)
+    except Exception as e:
+        st.info("🖼️ (圖片載入中...)")
 
     st.markdown(f"""
     <div class="kids-speech-bubble">
