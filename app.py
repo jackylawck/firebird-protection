@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🎨 雙語超大字體 CSS (全面修復 Selectbox 下拉選單隱形字)
+# 🎨 雙語超大字體 CSS
 st.markdown("""
     <style>
     /* 全局背景 */
@@ -22,52 +22,27 @@ st.markdown("""
     .tc-story { font-size: 1.6rem !important; line-height: 1.6; font-weight: bold; margin-bottom: 15px; }
     .en-story { font-size: 1.3rem !important; line-height: 1.5; color: #37474F !important; font-style: italic; }
     
-    /* 💥 關鍵修復：側邊欄 (Sidebar) 文字與標題顏色 */
+    /* 💥 側邊欄 (Sidebar) 樣式修復 */
     [data-testid="stSidebar"] {
         background-color: #1E293B !important;
     }
     [data-testid="stSidebar"] p, 
     [data-testid="stSidebar"] span, 
     [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] div,
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] h3 {
         color: #FFFFFF !important;
-        font-size: 1.3rem !important;
+        font-size: 1.2rem !important;
         font-weight: 900 !important;
     }
     [data-testid="stSidebar"] h2 {
         color: #FFEB3B !important;
-        font-size: 1.6rem !important;
+        font-size: 1.5rem !important;
     }
 
-    /* 💥 關鍵修復：Selectbox 下拉選單（強行設為白底黑字） */
-    div[data-baseweb="select"] > div {
-        background-color: #FFFFFF !important;
-        color: #000000 !important;
-        border: 3px solid #000000 !important;
-        border-radius: 12px !important;
-        font-weight: bold !important;
-    }
-    div[data-baseweb="select"] span {
-        color: #000000 !important;
-        font-weight: bold !important;
-    }
-    ul[data-baseweb="menu"] {
-        background-color: #FFFFFF !important;
-    }
-    ul[data-baseweb="menu"] li {
-        color: #000000 !important;
-        background-color: #FFFFFF !important;
-        font-weight: bold !important;
-        font-size: 1.2rem !important;
-    }
-    ul[data-baseweb="menu"] li:hover {
-        background-color: #FFEB3B !important;
-        color: #000000 !important;
-    }
-
-    /* 修正 Radio 選項文字 */
+    /* 主介面 Radio 選項 */
     .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
     .stRadio { background-color: #FFFFFF; padding: 20px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
     
@@ -314,25 +289,33 @@ if 'story_history' not in st.session_state:
 if 'current_node' not in st.session_state:
     st.session_state.current_node = "1_START"
 
-# 🚩 側邊欄（Sidebar）：快速跳頁功能
-st.sidebar.header("📖 快速跳轉選頁 (Jump)")
-page_options = {
-    1: "第 1 頁：玩具失竊大危機",
-    2: "第 2 頁：太空途中冒險",
-    3: "第 3 頁：進入外星基地",
-    4: "第 4 頁：對決糖果大王",
-    5: "第 5 頁：發動搞笑絕招",
-    6: "第 6 頁：大結局"
-}
+# 🚩 側邊欄（Sidebar）：改用絕對不會隱形的 Radio 單選選單
+st.sidebar.markdown("## 📖 快速跳轉選頁")
+page_options = [
+    "第 1 頁：玩具失竊大危機",
+    "第 2 頁：太空途中冒險",
+    "第 3 頁：進入外星基地",
+    "第 4 頁：對決糖果大王",
+    "第 5 頁：發動搞笑絕招",
+    "第 6 頁：大結局"
+]
 
-jump_page = st.sidebar.selectbox("選擇想看的頁數：", list(page_options.keys()), format_func=lambda x: page_options[x], index=st.session_state.step - 1)
+selected_page_str = st.sidebar.radio(
+    "請選擇想看的頁數：", 
+    page_options, 
+    index=st.session_state.step - 1,
+    key="sidebar_jump_radio"
+)
+
+# 算出對應的頁碼 (1-6)
+jump_page_num = page_options.index(selected_page_str) + 1
 
 if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
-    st.session_state.step = jump_page
-    if jump_page == 1:
+    st.session_state.step = jump_page_num
+    if jump_page_num == 1:
         st.session_state.current_node = "1_START"
     else:
-        st.session_state.current_node = f"{jump_page}_A"
+        st.session_state.current_node = f"{jump_page_num}_A"
     st.rerun()
 
 st.sidebar.markdown("---")
