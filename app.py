@@ -38,10 +38,13 @@ st.markdown("""
     div.stButton > button:hover { background-color: #FFD600 !important; color: #000000 !important; }
 
     .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
+    
+    /* 確保圖片有靚靚圓角 */
+    img { border-radius: 15px; border: 3px solid #000000; margin-bottom: 10px; }
     </style>
 """, unsafe_allow_html=True)
 
-# ================= 封裝故事引擎 (Story Engine) =================
+# ================= 封裝故事引擎 =================
 class StoryEngine:
     def __init__(self, story_key):
         self.story_key = story_key
@@ -70,7 +73,6 @@ class StoryEngine:
         
         if next_step <= 6:
             next_node = f"{next_step}_{choice_letter}"
-            # 容錯處理：如果該分支不存在，預設走 A 路線
             if next_node not in self.story_data["nodes"]:
                 next_node = f"{next_step}_A"
             self.current_node = next_node
@@ -80,7 +82,7 @@ class StoryEngine:
         self.current_node = "END"
 
     def jump_to_page(self, page_num):
-        self.history = [] # 跳頁時重置歷史記錄以防錯亂
+        self.history = []
         if page_num == 1:
             self.current_node = "1_START"
         else:
@@ -92,7 +94,7 @@ if "engine" not in st.session_state:
 
 engine = st.session_state.engine
 
-# ================= 側邊欄 (Sidebar) UI =================
+# ================= 側邊欄 UI =================
 st.sidebar.markdown("## 📚 選擇故事 (Select Story)")
 story_options = {k: v["name_tc"] for k, v in STORIES.items()}
 selected_story_title = st.sidebar.radio(
@@ -101,7 +103,6 @@ selected_story_title = st.sidebar.radio(
     index=list(story_options.keys()).index(engine.story_key)
 )
 
-# 偵測故事切換
 selected_key = [k for k, v in story_options.items() if v == selected_story_title][0]
 if selected_key != engine.story_key:
     st.session_state.engine = StoryEngine(selected_key)
@@ -124,13 +125,13 @@ if st.sidebar.button("🔄 重頭開始 (Start Over)"):
     engine.reset()
     st.rerun()
 
-# ================= 主介面渲染 (Main View) =================
+# ================= 主介面渲染 =================
 story_title_tc = engine.story_data["name_tc"]
 story_title_en = engine.story_data["name_en"]
 
 st.markdown(f'<p class="kids-title">🦸‍♂️ {story_title_tc} 🦸‍♂️</p>', unsafe_allow_html=True)
 st.markdown(f'<p class="en-title">{story_title_en}</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 雙語爆笑繪本 App (Bilingual Comic App)")
+st.caption("Son & Dad Exclusive | 雙語爆笑繪本 App")
 st.markdown("---")
 
 if not engine.is_ending():
@@ -143,7 +144,13 @@ if not engine.is_ending():
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
 
-    if "image" in stage:
+    # 🌟🌟 關鍵升級：支援多張圖片並排顯示 🌟🌟
+    if "images" in stage and isinstance(stage["images"], list):
+        cols = st.columns(len(stage["images"]))
+        for col, img_url in zip(cols, stage["images"]):
+            with col:
+                st.image(img_url, use_column_width=True)
+    elif "image" in stage:
         st.image(stage["image"], use_column_width=True)
 
     st.markdown(f"""
@@ -153,7 +160,6 @@ if not engine.is_ending():
     </div>
     """, unsafe_allow_html=True)
     
-    # 判斷是否為最後一頁（第 6 頁）
     if step < 6:
         option_keys = list(stage["choices"].keys())
         option_texts = [f"{k}. {stage['choices'][k]}" for k in option_keys]
@@ -170,12 +176,10 @@ if not engine.is_ending():
             st.rerun()
 
 else:
-    # 結局統計畫面
     st.balloons()
     st.success("🎉 恭喜！成功解鎖了爆笑雙語結局！ Congratulations!")
     
     st.header("🖼️ 專屬雙語故事繪本 (Our Bilingual Storybook)")
-    
     for i, (title, choice) in enumerate(engine.history, 1):
         st.markdown(f"""
         <div class="comic-panel">
@@ -189,4 +193,4 @@ else:
         st.rerun()
 
 st.markdown("---")
-st.caption("🔥 Firebird Protection App | Son & Dad Exclusive 雙語純淨版")
+st.caption("🔥 Firebird Protection App | Son & Dad Exclusive")
