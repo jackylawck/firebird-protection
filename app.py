@@ -142,11 +142,11 @@ if not engine.is_ending():
     if "sfx" in stage:
         st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
 
-    # 圖片渲染相容處理
-    if "images" in stage and isinstance(stage["images"], list) and len(stage["images"]) > 0:
+    # 💥 徹底修復：穩定的單圖與多圖渲染邏輯
+    if "images" in stage and isinstance(stage["images"], list):
         cols = st.columns(len(stage["images"]))
-        for col, img_url in zip(cols, stage["images"]):
-            with col:
+        for idx, img_url in enumerate(stage["images"]):
+            with cols[idx]:
                 st.image(img_url, use_column_width=True)
     elif "image" in stage and stage["image"]:
         st.image(stage["image"], use_column_width=True)
