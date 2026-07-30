@@ -3,207 +3,245 @@ import time
 
 # 頁面配置
 st.set_page_config(
-    page_title="Firebird Protection | 10關互動故事大冒險",
-    page_icon="🔥",
+    page_title="Firebird Protection | Dog Man 風格漫畫大冒險",
+    page_icon="💥",
     layout="centered"
 )
 
-# CSS 樣式美化 (高對比度文字)
+# 🎨 Dog Man 爆笑美式漫畫 CSS 樣式
 st.markdown("""
     <style>
-    .main-title { 
-        font-size: 2.2rem; 
-        color: #FF4B4B; 
-        font-weight: bold; 
+    /* 全局漫畫背景與字型 */
+    .stApp {
+        background-color: #FFFDE7;
+    }
+    
+    /* 漫畫標題風格 */
+    .comic-title { 
+        font-size: 2.8rem; 
+        color: #FF1744; 
+        font-weight: 900; 
         text-align: center; 
+        text-shadow: 3px 3px 0px #000000;
+        font-family: 'Impact', 'Arial Black', sans-serif;
+        letter-spacing: 2px;
     }
-    .story-card { 
-        background-color: #F0F4F8; 
-        color: #1A1A1A !important; 
-        padding: 20px; 
-        border-radius: 12px; 
-        border-left: 6px solid #FF4B4B; 
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
-    .story-card b, .story-card i {
+    
+    /* Dog Man 對話框風格 */
+    .speech-bubble {
+        position: relative;
+        background: #FFFFFF;
+        border: 4px solid #000000;
+        border-radius: 20px;
+        padding: 20px;
+        margin: 20px 0;
+        font-size: 1.2rem;
+        font-weight: bold;
         color: #000000 !important;
+        box-shadow: 6px 6px 0px #000000;
     }
-    .print-box {
+    
+    /* 漫畫音效文字 (SFX) */
+    .sfx-text {
+        font-size: 2rem;
+        color: #FF9100;
+        font-weight: 900;
+        text-align: center;
+        text-shadow: 2px 2px 0px #000;
+        transform: rotate(-5deg);
+        margin: 10px 0;
+    }
+
+    /* Print 專用漫畫格 */
+    .comic-panel {
         background-color: #FFFFFF;
+        border: 4px solid #000000;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 5px 5px 0px #FFD600;
         color: #000000 !important;
-        padding: 25px;
-        border: 2px dashed #FF4B4B;
-        border-radius: 10px;
-        font-family: 'Courier New', Courier, monospace;
-        line-height: 1.8;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 初始化遊戲狀態 Session State
+# 初始化遊戲狀態
 if 'step' not in st.session_state:
     st.session_state.step = 1
 if 'story_history' not in st.session_state:
     st.session_state.story_history = []
 
-# 主標題
-st.markdown('<p class="main-title">🔥🦅 火鷹俠：10關大冒險</p>', unsafe_allow_html=True)
-st.caption("Jarvis & 爸爸 專屬創作 | Firebird Protection 互動故事")
+# 標題與 Dog Man 搞笑開場
+st.markdown('<p class="comic-title">💥 火鷹俠 FIREBIRD 💥</p>', unsafe_allow_html=True)
+st.markdown('<div class="sfx-text">✨ Dog Man 爆笑漫畫大冒險！ ✨</div>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# 10 個關卡的劇情與 3 個選項設定
+# 10 個關卡（加入插圖 URL 與 Dog Man 風格對話）
 stages = {
     1: {
-        "title": "第 1 關：深山迷路與神秘電話",
-        "story": "火鷹俠一邊打電話一邊尋找隱蔽地方，一不留神走得太遠，來到了一座神秘的深山森林。四周靜悄悄的，突然樹林裡傳來異響！火鷹俠該怎麼辦？",
+        "title": "CHAPTER 1: 深山迷路與神秘電話！",
+        "image": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=600&auto=format&fit=crop", # 森林插圖
+        "sfx": "📞 BEEP BEEP!! ZZZZZT!!",
+        "story": "火鷹俠一邊打電話一邊「匿埋」，點知行行吓行得太遠，去咗一座神秘黑森林！「嘰嘰咕咕……」森林裡傳出奇怪的聲音！",
         "choices": [
-            "A. 🚀 啟動 Firebird Protection 力量，召喚森林野生動物做手下！",
-            "B. 🛡️ 開啟「火鷹隱形防護罩」，先躲在樹上觀察形勢！",
-            "C. 🔊 用智能手環大聲播放「火鷹戰歌」，嚇退潛伏的敵人！"
+            "A. 🚀 啟動 Firebird 力量！發射火焰餅乾召喚森林動物做手下！",
+            "B. 🛡️ 開啟「搞笑隱形術」，貼喺樹幹度假裝自己係一片樹葉！",
+            "C. 📢 用智能手環播《Dog Man 主題曲》，跳舞嚇退敵人！"
         ]
     },
     2: {
-        "title": "第 2 關：動物手下的搜尋任務",
-        "story": "火鷹俠集結了動物小隊（飛鷹、狼群、松鼠）！現在需要展開搜尋，尋找隱藏在森林深處的壞人。火鷹俠要點樣分工？",
+        "title": "CHAPTER 2: 動物手下搞搞震大搜尋！",
+        "image": "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=600&auto=format&fit=crop", # 獅子/動物插圖
+        "sfx": "🔍 WOOF WOOF! ROAR!",
+        "story": "火鷹俠召喚咗動物大軍（飛鷹、搞笑狼群、爆笑松鼠）！壞人唔知藏喺邊，動物手下要分工去搵壞人！",
         "choices": [
-            "A. 🦅 派飛鷹小隊飛上高空，做全空域 360 度偵查！",
-            "B. 🐺 讓狼群憑嗅覺在地面灌木叢仔細搜尋！",
-            "C. 🐿️ 讓小松鼠們在樹冠之間穿梭，尋找秘密基地入口！"
+            "A. 🦅 派飛鷹小隊戴上墨鏡，飛上高空做 360 度搞笑偵查！",
+            "B. 🐺 讓狼群用鼻哥聞，一邊搵壞人一邊搵骨頭！",
+            "C. 🐿️ 讓松鼠向樹下投擲松果，用「松果雨」逼壞人現身！"
         ]
     },
     3: {
-        "title": "第 3 關：發現神秘山洞基地",
-        "story": "動物手下們終於在懸崖下方找到了一個冒著紫煙的神秘山洞！壞人就在裡面，但山洞口有激光防禦網。火鷹俠決定：",
+        "title": "CHAPTER 3: 發現神秘山洞基地！",
+        "image": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop", # 山洞插圖
+        "sfx": "💥 BAM! CRASH!",
+        "story": "松鼠果真喺山洞口發現咗壞人！山洞門口有紫色的激光防禦網，壞人喺裏面吃食熱狗！",
         "choices": [
-            "A. 💥 用「火鷹烈焰衝擊」直接轟開激光防禦網！",
-            "B. 鑽進小松鼠挖的秘密地道，偷偷溜進山洞！",
-            "C. 讓大象手下搬來巨石，把激光發射器砸爛！"
+            "A. 💥 用「火鷹超音速屁屁衝擊」直接撞飛防禦網！",
+            "B. 鑽進小松鼠挖嘅搞笑地道，偷偷溜進去搶壞人嘅熱狗！",
+            "C. 讓大象搬來超大巨石，像打保齡球咁砸爛防禦網！"
         ]
     },
     4: {
-        "title": "第 4 關：壞人的黑科技武器",
-        "story": "衝進山洞後，壞人首領「時光黑影」推出了龐大的黑科技大砲，準備向城市發射「時間倒轉光束」！火鷹俠如何應對？",
+        "title": "CHAPTER 4: 壞人的黑科技大砲！",
+        "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop", # 科技/大砲感
+        "sfx": "⚡ ZAP! ZAP!",
+        "story": "壞人首領「時光黑影」搬出一台超級大砲，準備發射「時間倒轉光束」，把整座城市變成嬰兒王國！",
         "choices": [
-            "A. 🛡️ 展開「火鷹超級防護罩」，死守大砲射線！",
-            "B. ⚡ 啟動「光影翅膀超光速」，飛過去拔掉大砲的電源線！",
-            "C. 讓獵豹手下快速奪走壞人手中的發射遙控器！"
+            "A. 🛡️ 展開「火鷹巨型搞笑防護罩」，把光束彈回壞人身上！",
+            "B. ⚡ 飛過去用香蕉皮滑倒壞人，順便拔掉大砲電源！",
+            "C. 讓獵豹手下咬走壞人嘅褲子，讓壞人分心！"
         ]
     },
     5: {
-        "title": "第 5 關：萬獸之王登場！",
-        "story": "壞人見大砲無效，啟動了緊急備用能源，發射出強大的能量波！就在危急關頭，森林深處傳來一聲震撼山谷的獅吼——百獸之王「金獅」衝了進來！火鷹俠要做什麼？",
+        "title": "CHAPTER 5: 萬獸之王獅子登場！",
+        "image": "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=600&auto=format&fit=crop", # 獅子
+        "sfx": "🦁 ROAAAAAR!!!",
+        "story": "壞人發狂啦！就在此時，森林深處傳來巨響——森林之王「金獅」穿著超人披風帥氣登場！",
         "choices": [
-            "A. 🦁 與金獅進行「終極合體」，變成【獅王火鷹俠】！",
-            "B. 🤝 給金獅穿上 Firebird Protection 護甲，雙人並肩作戰！",
-            "C. 讓金獅掩護其他動物手下撤退，自己獨自對決壞人！"
+            "A. 🦁 與金獅進行 Dog Man 式合體，變成【獅王火鷹俠】！",
+            "B. 🤝 給金獅戴上「火鷹搞笑頭盔」，雙人組隊打壞人！",
+            "C. 讓金獅大吼一聲，把壞人嘅頭髮全部吹成爆米花髮型！"
         ]
     },
     6: {
-        "title": "第 6 關：合體形態的試煉",
-        "story": "火鷹俠與金獅成功合體！【獅王火鷹俠】身上閃耀著金紅色的霸氣烈焰！壞人嚇得派出了一群鋼鐵機械蜘蛛包圍過來！獅王火鷹俠會用哪招？",
+        "title": "CHAPTER 6: 鋼鐵蜘蛛大軍襲來！",
+        "image": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop", # 動漫戰鬥
+        "sfx": "🕷️ KACHACK! KACHACK!",
+        "story": "合體成功！【獅王火鷹俠】全身發光！壞人放出了 100 隻鋼鐵蜘蛛手下圍攻過來！",
         "choices": [
-            "A. 🐾 發動「獅王火焰爪」，把機械蜘蛛瞬間切成碎片！",
-            "B. 🦁 喊出「獅王咆哮彈」，用音波將所有蜘蛛震飛！",
-            "C. 🪶 揮動火焰翅膀，刮起烈焰風暴將蜘蛛全部燒融！"
+            "A. 🐾 發動「獅王火焰肉墊拳」，把蜘蛛打成搞笑玩具！",
+            "B. 🦁 喊出「超大聲獅吼功」，直接將蜘蛛震到上天！",
+            "C. 🪶 揮動火焰翅膀吹出甜甜圈形狀嘅火圈，套住所有蜘蛛！"
         ]
     },
     7: {
-        "title": "第 7 關：壞人的最後掙紮",
-        "story": "機械蜘蛛全滅！壞人首領「時光黑影」眼看要敗，決定按下一鍵自爆按鈕，想把山洞和周圍森林一起炸毀！火鷹俠該怎麼辦？",
+        "title": "CHAPTER 7: 壞人按下了自爆按鈕！",
+        "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop", # 警報
+        "sfx": "🚨 BEEP! BEEP! DANGER!",
+        "story": "壞人輸唔起，按下了「30秒搞笑自爆按鈕」，山洞開始搖晃，壞人自己都嚇到哭！",
         "choices": [
-            "A. 凍結！用智能手環發射「零度冰封光束」凍結自爆計時器！",
-            "B. 💨 用超高速把自爆裝置一把抓起，扔向無人的高空爆炸！",
-            "C. 🛡️ 用最大功率的防護罩籠罩整個自爆裝置，吸收爆炸威力！"
+            "A. 🧊 吐出一口「冰淇淋冷凍氣息」，凍結自爆計時器！",
+            "B. 💨 用超光速把自爆彈抓起來，扔去外太空炸泡泡！",
+            "C. 🛡️ 用防護罩把壞人和炸彈一齊罩住，聽「噗」一聲悶響！"
         ]
     },
     8: {
-        "title": "第 8 關：發動終極絕招！",
-        "story": "自爆危機解除！壞人已經無路可逃，但還在垂死掙紮。獅王火鷹俠積蓄了全身最強的力量，準備一擊必殺！他大喊一聲發動的絕招是：",
+        "title": "CHAPTER 8: 終極絕招大發射！",
+        "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop", # 耀眼彩虹光
+        "sfx": "🌈 KABOOM!!!",
+        "story": "危機解除！獅王火鷹俠準備給壞人最後一擊！他聚精會神，喊出了傳說中的絕招：",
         "choices": [
-            "A. 🌈「—— 顏色沙漠土 ！！！」（把壞人全變成五彩沙土）",
-            "B. ✨「—— 彩虹星辰塵 ！！！」（把壞人全變成閃耀星塵）",
-            "C. 💎「—— 五彩水晶砂 ！！！」（把壞人全封印成彩色水晶）"
+            "A. 🌈「—— 顏色沙漠土 ！！！」（把壞人全變成彩色沙土）",
+            "B. ✨「—— 彩虹彩帶爆米花 ！！！」（把壞人全變成彩帶）",
+            "C. 💎「—— 糖果彩色水晶 ！！！」（把壞人封印成巨型軟糖）"
         ]
     },
     9: {
-        "title": "第 9 關：淨化與拯救成功！",
-        "story": "絕招發射！耀眼的光芒籠罩了整個山洞，壞人和他們的邪惡武器全部變成了五彩繽紛的沙土，徹底被淨化！森林恢復了平靜，動物手下們紛紛歡呼！火鷹俠接下來要做咩？",
+        "title": "CHAPTER 9: 壞人變成了顏色沙漠土！",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop", # 彩色沙灘
+        "sfx": "🎉 YAY! WE WON!",
+        "story": "絕招命中！壞人和他們的武器瞬間變成咗五彩繽紛嘅「顏色沙漠土」！森林保住了，動物們開心到跳舞！",
         "choices": [
-            "A. 🎺 帶領動物大軍舉辦一場「森林勝利狂歡派對」！",
-            "B. 🚁 叫總部派出飛艇，把彩色的沙土運回去研究做藝術品！",
-            "C. 飛回市中心大鐘樓，向全城市民宣告和平回歸！"
+            "A. 🎺 舉辦「Dog Man 式搞笑狂歡派對」，大家一齊吃熱狗！",
+            "B. 🚁 用直升機把彩色沙漠土運去沙灘，建一座彩虹城堡！",
+            "C. 擺一個超帥氣嘅波士 Pose，拍下英雄漫畫封面照！"
         ]
     },
     10: {
-        "title": "第 10 關：英雄歸來與傳奇誕生",
-        "story": "火鷹俠完成了任務，回到了總部。智囊隊長和全城市民給他送上了最高榮譽勳章！Jarvis（火鷹俠）對大家說的英雄名言是：",
+        "title": "CHAPTER 10: 英雄歸來與漫畫大結局！",
+        "image": "https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop", # 霓虹英雄
+        "sfx": "🏆 HERO OF THE YEAR!",
+        "story": "火鷹俠回到市中心，全城市民同智囊隊長歡呼慶祝！Jarvis（火鷹俠）對著鏡頭講出了最霸氣嘅名言：",
         "choices": [
-            "A. 💬「只要有 Firebird Protection，正義永遠不會失敗！」",
-            "B. 💬「團結就是力量！感謝我的森林動物好夥伴！」",
-            "C. 💬「保護城市是我的職責！下一場冒險我們再見！」"
+            "A. 💬「只要有 Firebird Protection，正義同搞笑永遠勝出！」",
+            "B. 💬「多謝我嘅動物好朋友！今晚大家一齊吃大餐！」",
+            "C. 💬「拯救世界成功！下一集 Dog Man 冒險再見！」"
         ]
     }
 }
 
-# 遊戲流程控制
+# 流程控制
 current_step = st.session_state.step
 
 if current_step <= 10:
-    # 顯示進度條
-    st.progress(current_step / 10, text=f"冒險進度：第 {current_step} / 10 關")
+    stage = stages[current_step]
     
-    stage_info = stages[current_step]
-    st.header(stage_info["title"])
+    # 進度條
+    st.progress(current_step / 10, text=f"📖 漫畫頁數：第 {current_step} / 10 頁")
     
+    # 關卡標題與音效
+    st.subheader(stage["title"])
+    st.markdown(f'<div class="sfx-text">{stage["sfx"]}</div>', unsafe_allow_html=True)
+    
+    # 顯示漫畫風格插圖
+    st.image(stage["image"], use_column_width=True)
+    
+    # 漫畫對話框
     st.markdown(f"""
-    <div class="story-card">
-    {stage_info["story"]}
+    <div class="speech-bubble">
+    💬 <b>【劇情】：</b><br>{stage["story"]}
     </div>
     """, unsafe_allow_html=True)
     
-    st.subheader("請仔仔做出選擇：")
-    selected_option = st.radio("選擇你的劇情走向：", stage_info["choices"], key=f"choice_{current_step}")
+    # 抉擇按鈕
+    selected_option = st.radio("👉 請仔仔選擇 Dog Man 式搞笑走向：", stage["choices"], key=f"c_{current_step}")
     
-    if st.button("🔥 確定選擇，進入下一關！"):
-        # 記錄選擇
-        st.session_state.story_history.append((stage_info["title"], selected_option))
+    if st.button("💥 確定！翻去下一頁漫畫！"):
+        st.session_state.story_history.append((stage["title"], selected_option))
         st.session_state.step += 1
         st.rerun()
 
 else:
-    # 通關，生成完整故事 Print 版
+    # 漫畫通關與 Print 頁面
     st.balloons()
-    st.success("🎉 恭喜通關！火鷹俠 successfully 完成了 10 關大冒險！")
+    st.success("🎉 恭喜！你哋完成了 Dog Man 風格《火鷹俠》漫畫大冒險！")
     
-    st.header("📜 火鷹俠傳奇冒險：完整故事 Print 版")
-    st.caption("你可以直接複製以下框裡面的完整故事，印出來留念或存檔！")
-    
-    full_story_text = "【火鷹俠：Firebird Protection 10關大冒險】\n\n"
-    full_story_text += "創作者：Jarvis (火鷹俠) & 爸爸\n"
-    full_story_text += "----------------------------------------\n\n"
+    st.header("🖼️ 你的專屬 Dog Man 漫畫繪本 (Print 版)")
+    st.caption("以下係你哋一齊創作嘅故事，可以 Print 埋出嚟貼喺房門口！")
     
     for i, (title, choice) in enumerate(st.session_state.story_history, 1):
-        full_story_text += f"{title}\n"
-        full_story_text += f"【火鷹俠的抉擇】：{choice}\n\n"
+        st.markdown(f"""
+        <div class="comic-panel">
+        <h3>📖 第 {i} 格漫畫：{title}</h3>
+        <p style="font-size: 1.1rem;"><b>💥 火鷹俠嘅抉擇：</b> {choice}</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-    full_story_text += "----------------------------------------\n"
-    full_story_text += "🎉 結局：火鷹俠成功拯救森林與城市，成為傳奇英雄！"
-    
-    # 展示 Print 框
-    st.markdown(f"""
-    <div class="print-box">
-    <pre style="white-space: pre-wrap; word-wrap: break-word;">{full_story_text}</pre>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    if st.button("🔄 重新玩一次（重新選擇劇情）"):
+    if st.button("🔄 再畫一次新漫畫（重新玩）"):
         st.session_state.step = 1
         st.session_state.story_history = []
         st.rerun()
 
 # 頁尾
 st.markdown("---")
-st.caption("🔥 Firebird Protection App v3.0 | 版權所有：Jarvis & 爸爸")
+st.caption("💥 Firebird Protection x Dog Man Comic App | Jarvis & 爸爸 聯合出品")
