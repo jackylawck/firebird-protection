@@ -1,17 +1,57 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from story_data import STORIES, get_ending_key
+import importlib
+import pkgutil
+import os
+import stories
 
-# ----------------- 1. 頁面基礎配置 -----------------
+# ----------------- 1. 動態故事載入器 (Dynamic Story Loader) -----------------
+def load_all_stories():
+    """自動掃描 stories/ 資料夾內的所有故事檔案"""
+    stories_dict = {}
+    package = stories
+    for _, module_name, _ in pkgutil.iter_modules(package.__path__):
+        full_module_name = f"stories.{module_name}"
+        module = importlib.import_module(full_module_name)
+        
+        if hasattr(module, "STORY_INFO") and hasattr(module, "SCENES"):
+            story_id = module.STORY_INFO["id"]
+            stories_dict[story_id] = {
+                "name_tc": module.STORY_INFO["name_tc"],
+                "name_en": module.STORY_INFO.get("name_en", ""),
+                "nodes": module.SCENES
+            }
+    return stories_dict
+
+def get_ending_key(stats):
+    b, c, e = stats.get("bravery", 0), stats.get("creativity", 0), stats.get("empathy", 0)
+    if b >= 3 and e >= 3:
+        return "6_LEADER"
+    elif b >= 4 and c >= 2:
+        return "6_HERO"
+    elif c >= 4 and e >= 2:
+        return "6_INVENTOR"
+    elif e >= 4 and b >= 2:
+        return "6_CARER"
+    elif b >= 5:
+        return "6_BRAVE"
+    elif c >= 5:
+        return "6_CREATIVE"
+    elif e >= 5:
+        return "6_EMPATHY"
+    else:
+        return "6_DEFAULT"
+
+STORIES = load_all_stories()
+
+# ----------------- 2. 頁面基礎配置與 UI CSS -----------------
 st.set_page_config(
     page_title="火鷹俠全人教育故事館",
     page_icon="🦸‍♂️",
     layout="centered"
 )
 
-# ----------------- 2. 🎨 WhatsApp 網址分享預覽卡片 (Open Graph) 與 UI CSS -----------------
 st.markdown("""
-    <!-- WhatsApp / Social Media Share Meta Tags -->
     <head>
         <meta property="og:title" content="🦸‍♂️ 火鷹俠全人教育故事館" />
         <meta property="og:description" content="Son & Dad Exclusive | 雙語繪本 × 成長型思維 × STEAM 互動冒險" />
@@ -25,7 +65,6 @@ st.markdown("""
     .kids-title { font-size: clamp(1.5rem, 4vw, 2rem) !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 2px; }
     .en-title { font-size: clamp(0.9rem, 2.5vw, 1.1rem) !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 8px; }
     
-    /* 上格：故事獨立滾動區域 */
     .story-scroll-box {
         max-height: 48vh;
         overflow-y: auto;
@@ -57,7 +96,6 @@ st.markdown("""
     .story-text-en { font-size: 1rem !important; line-height: 1.4; font-weight: 600; color: #424242 !important; margin-top: 6px; }
     .bad-reason-text { font-size: 1.05rem !important; font-weight: bold; color: #D32F2F !important; margin-top: 10px; padding: 8px; border-left: 4px solid #D32F2F; background: #FFCDD2; line-height: 1.4;}
 
-    /* 下格：選擇按鈕區域 */
     div.stButton { display: flex; justify-content: center; }
     div.stButton > button { 
         background-color: #FFEB3B !important; 
@@ -101,9 +139,11 @@ if "unlocked_endings" not in st.session_state:
 
 # ----------------- 4. 📚 側邊欄：故事選擇與能力面板 -----------------
 st.sidebar.markdown("## 📚 選擇冒險故事\n*(Choose a Story)*")
+
+story_keys = list(STORIES.keys())
 story_choice = st.sidebar.radio(
     "小隊長，你想玩哪個故事？ (Captain, which story do you want to play?)", 
-    ["Story1", "Story2", "Story3"],
+    story_keys,
     format_func=lambda x: STORIES[x]["name_tc"]
 )
 
@@ -197,7 +237,7 @@ else:
         </div>
     ''', unsafe_allow_html=True)
 
-# 🎯 強制歸頂 JavaScript：每次切換頁面時，將「故事盒子」與「整個手機頁面」同時捲動回最頂部
+# 強制歸頂 JavaScript
 components.html("""
     <script>
         const storyBox = window.parent.document.getElementById('story-box');
