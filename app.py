@@ -43,36 +43,33 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ----------------- 💥 免 TOKEN / 免驗證 API 通道 -----------------
+# ----------------- 💥 真・免 API KEY / 免 Token 通道 -----------------
 def call_free_ai(messages, max_tokens=800):
-    url = "https://router.huggingface.co/hf-inference/v1/chat/completions"
+    url = "https://text.pollinations.ai/"
+    
+    payload = {
+        "messages": messages,
+        "model": "openai",
+        "jsonMode": False
+    }
+    
     headers = {
         "Content-Type": "application/json"
     }
-    payload = {
-        "model": "Qwen/Qwen2.5-72B-Instruct",
-        "messages": messages,
-        "max_tokens": max_tokens,
-        "temperature": 0.8
-    }
     
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=25)
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
         if response.status_code == 200:
-            return response.json()["choices"][0]["message"]["content"]
+            return response.text
         else:
-            payload["model"] = "meta-llama/Llama-3.3-70b-Instruct"
-            res_fb = requests.post(url, json=payload, headers=headers, timeout=20)
-            if res_fb.status_code == 200:
-                return res_fb.json()["choices"][0]["message"]["content"]
-            return f"❌ 火鷹俠對講機正忙碌中 ({response.status_code})，請再試一次！"
+            return f"❌ 火鷹俠對講機連線忙碌中 ({response.status_code})，請再試一次！"
     except Exception as e:
         return f"❌ 連線微弱，請稍後再試！({str(e)})"
 
 # ----------------- 標題與簡介 -----------------
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠全人教育故事館 🚀</p>', unsafe_allow_html=True)
 st.markdown('<p class="en-title">Firebird Protection: Whole-Person Education Hub</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 免驗證直連模式 | 雙語繪本 × 成長對講機")
+st.caption("Son & Dad Exclusive | 完全免 Token 直連模式 | 雙語繪本 × 成長對講機")
 st.markdown("---")
 
 tab1, tab2 = st.tabs(["📖 互動故事冒險", "📻 火鷹俠全能學習對講機"])
