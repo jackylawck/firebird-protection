@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from story_data import STORIES, get_ending_key
 
 # ----------------- 頁面基礎配置 -----------------
@@ -36,10 +37,21 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# ----------------- 📍 置頂錨點與跳轉指令 -----------------
+st.markdown('<div id="top-anchor"></div>', unsafe_allow_html=True)
+
+def scroll_to_top():
+    # 注入小段 JS 促使手機瀏覽器強制捲動回頁面頂部
+    components.html("""
+        <script>
+            window.parent.document.getElementById('top-anchor').scrollIntoView({behavior: 'smooth'});
+        </script>
+    """, height=0)
+
 # ----------------- 標題 -----------------
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠全人教育故事館 🚀</p>', unsafe_allow_html=True)
 st.markdown('<p class="en-title">Firebird Protection: Interactive Branching Stories</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 雙語並行學習 × 狀態機敘事 × 挫折學習")
+st.caption("Son & Dad Exclusive | 純文字手機最佳化模式 | 自動置頂閱讀")
 st.markdown("---")
 
 # ----------------- ⚙️ 初始化遊戲引擎 -----------------
@@ -59,7 +71,7 @@ if "history_stats" not in st.session_state:
 if "bad_reason" not in st.session_state:
     st.session_state.bad_reason = ""
 if "unlocked_endings" not in st.session_state:
-    st.session_state.unlocked_endings = set() 
+    st.session_state.unlocked_endings = set()
 
 # ----------------- 📚 側邊欄：故事選擇與能力面板 -----------------
 st.sidebar.markdown("## 📚 選擇冒險故事\n*(Choose a Story)*")
@@ -99,8 +111,7 @@ else:
     for ending in st.session_state.unlocked_endings:
         st.sidebar.markdown(f"✅ {ending}")
 
-# 計算頁數與進度
-total_nodes = len([k for k in current_story_nodes.keys() if not k.startswith("BAD_") and not k.startswith("6_")])
+# 計算頁數進度
 try:
     current_page = int(scene_key.split('_')[0])
     progress_text = f"第 {current_page} 頁 (Page {current_page})"
@@ -111,7 +122,7 @@ except:
 is_bad_ending = scene.get("is_bad_ending", False)
 
 if is_bad_ending:
-    # 💥 壞結局渲染 (雙語提示)
+    # 💥 壞結局渲染
     st.error("💡【火鷹俠的成長型思維課】：失敗不可怕！最重要是我們從中學到什麼，然後再試一次！\n*(Growth Mindset: Failure is just a chance to learn. Let's try again!)*")
     st.markdown(f'''
         <div class="bad-card">
@@ -129,17 +140,19 @@ if is_bad_ending:
         if st.button("↩️ 穿越時空！返回上一頁重新選擇！\n(Time Travel! Go back and choose again!)"):
             if st.session_state.history:
                 st.session_state.current_scene = st.session_state.history.pop()
-                st.session_state.stats = st.session_state.history_stats.pop() 
+                st.session_state.stats = st.session_state.history_stats.pop()
             else:
                 reset_game()
+            scroll_to_top()
             st.rerun()
     with col2:
         if st.button("🔄 重新開始整個故事\n(Restart Story)"):
             reset_game()
+            scroll_to_top()
             st.rerun()
 
 elif scene_key.startswith("6_"):
-    # 🏆 勝利結局渲染 (雙語成就卡)
+    # 🏆 勝利結局渲染
     st.balloons()
     ending_data = {
         "6_LEADER": ("🏆 結局：全人小領袖 (Whole-Person Leader)", "兼具勇氣與關懷，你是天生的全人小領袖！<br>(With courage and care, you are a born Whole-Person Leader!)"),
@@ -153,8 +166,6 @@ elif scene_key.startswith("6_"):
     }
     
     title_tc, desc_tc = ending_data.get(scene_key, ending_data["6_DEFAULT"])
-    
-    # 加入解鎖清單 (只取中文名稱作顯示)
     st.session_state.unlocked_endings.add(title_tc.split("：")[1].split(" (")[0])
     
     st.markdown(f'''
@@ -168,10 +179,11 @@ elif scene_key.startswith("6_"):
     
     if st.button("🔄 挑戰其他路線與故事\n(Play Again)"):
         reset_game()
+        scroll_to_top()
         st.rerun()
 
 else:
-    # 🎯 普通場景渲染
+    # 🎯 普通場景渲染 (完全移除圖片顯示邏輯)
     st.markdown(f'''
         <div class="story-card">
             <span class="story-progress">📌 冒險進度 (Progress)：{progress_text}</span>
@@ -181,16 +193,6 @@ else:
             <div class="story-text-en">{scene.get("story_en", "")}</div>
         </div>
     ''', unsafe_allow_html=True)
-    
-    # 圖片渲染與容錯機制
-    if "images" in scene and scene["images"]:
-        cols = st.columns(len(scene["images"]))
-        for idx, img_url in enumerate(scene["images"]):
-            with cols[idx]:
-                try:
-                    st.image(img_url, use_container_width=True)
-                except Exception:
-                    st.markdown("🖼️ *(火鷹俠正在想像這個精彩畫面... Firebird is imagining this scene...)*")
 
     st.markdown("---")
     st.markdown("### 🎯 小隊長，下一步你要怎麼做？\n*(What will you do next?)*")
@@ -199,21 +201,20 @@ else:
     if choices:
         choices_items = list(choices.items())
         for idx, (opt_key, opt_data) in enumerate(choices_items):
-            letter = chr(ord('A') + idx) # A, B, C...
+            letter = chr(ord('A') + idx)
             
-            # 按鈕文字支援多行 (中文 \n 英文)
-            if st.button(f"👉 選項 {letter}: \n{opt_data['text']}"):
+            if st.button(f"👉 選項 {letter}: \n{opt_data['text']}", key=f"btn_{scene_key}_{idx}"):
                 
-                # 保存記錄
+                # 1. 保存歷史記錄
                 st.session_state.history.append(scene_key)
                 st.session_state.history_stats.append(st.session_state.stats.copy())
                 
-                # 累加新效果
+                # 2. 累加屬性點數
                 if "effect" in opt_data:
                     for k, v in opt_data["effect"].items():
                         st.session_state.stats[k] = max(0, st.session_state.stats[k] + v)
                 
-                # 處理跳轉與壞結局原因
+                # 3. 處理跳轉與壞結局
                 if opt_data.get("is_bad", False):
                     st.session_state.bad_reason = opt_data.get("bad_reason", "你的選擇帶來了意外後果！(Unexpected consequences!)")
                     st.session_state.current_scene = opt_data["next"]
@@ -223,9 +224,12 @@ else:
                     else:
                         st.session_state.current_scene = opt_data["next"]
                 
+                # 4. 執行自動回頂與重新渲染
+                scroll_to_top()
                 st.rerun()
 
 st.sidebar.markdown("---")
 if st.sidebar.button("🔄 返回故事第一頁\n(Back to Page 1)"):
     reset_game()
+    scroll_to_top()
     st.rerun()
