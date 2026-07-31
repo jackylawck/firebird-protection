@@ -1,202 +1,193 @@
 import streamlit as st
-from story_data import STORIES
+import requests
 
 # 頁面配置
 st.set_page_config(
-    page_title="火鷹俠故事庫 | Firebird Protection",
+    page_title="火鷹俠故事館 | Firebird Protection",
     page_icon="🦸‍♂️",
     layout="centered"
 )
 
-# 🎨 雙語超大字體 CSS
+# 🎨 兒童雙語與響應式 CSS 升級
 st.markdown("""
     <style>
     .stApp { background-color: #E0F7FA; color: #000000 !important; }
     p, span, label, div, h1, h2, h3, h4 { color: #000000 !important; font-family: 'Comic Sans MS', sans-serif; }
-    .kids-title { font-size: 2.6rem !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; text-shadow: 2px 2px 0px #B2EBF2; }
-    .en-title { font-size: 1.8rem !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
-    .kids-sfx { font-size: 2rem !important; color: #E65100 !important; font-weight: 900; text-align: center; margin: 10px 0; }
-    .kids-speech-bubble { background: #FFFFFF; border: 5px solid #000000; border-radius: 25px; padding: 25px; margin: 15px 0; box-shadow: 8px 8px 0px #000000; }
-    .tc-story { font-size: 1.6rem !important; line-height: 1.6; font-weight: bold; margin-bottom: 15px; }
-    .en-story { font-size: 1.3rem !important; line-height: 1.5; color: #37474F !important; font-style: italic; }
+    .kids-title { font-size: clamp(1.8rem, 5vw, 2.5rem) !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; }
+    .en-title { font-size: clamp(1rem, 3vw, 1.4rem) !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
     
+    /* 故事卡片與響應式字體 */
+    .story-card {
+        background: #FFFFFF;
+        border: 4px solid #000000;
+        border-radius: 20px;
+        padding: 20px;
+        margin: 15px 0;
+        box-shadow: 6px 6px 0px #000000;
+    }
+    .story-text { font-size: clamp(1.2rem, 4vw, 1.6rem) !important; line-height: 1.6; font-weight: bold; }
+    
+    /* 側邊欄 */
     [data-testid="stSidebar"] { background-color: #1E293B !important; }
-    [data-testid="stSidebar"] h2 { color: #FFEB3B !important; font-size: 1.5rem !important; }
-    [data-testid="stSidebar"] label p { color: #000000 !important; font-size: 1.05rem !important; font-weight: 900 !important; }
+    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label { color: #FFFFFF !important; }
 
-    .stRadio label { font-size: 1.3rem !important; font-weight: bold !important; color: #000000 !important; padding: 8px 0; }
-    .stRadio { background-color: #FFFFFF; padding: 15px; border: 4px solid #000000; border-radius: 20px; box-shadow: 6px 6px 0px #000000; margin-bottom: 20px; }
-    .stRadio p { color: #000000 !important; }
-
+    /* 按鈕置中與最大寬度限制 */
+    div.stButton {
+        display: flex;
+        justify-content: center;
+    }
     div.stButton > button {
         background-color: #FFEB3B !important; color: #000000 !important;
-        font-size: 1.4rem !important; font-weight: 900 !important;
-        border: 4px solid #000000 !important; border-radius: 18px !important;
-        padding: 12px 20px !important; box-shadow: 5px 5px 0px #000000 !important;
+        font-size: 1.3rem !important; font-weight: 900 !important;
+        border: 4px solid #000000 !important; border-radius: 16px !important;
+        padding: 10px 20px !important; box-shadow: 4px 4px 0px #000000 !important;
         width: 100% !important;
+        max-width: 400px !important; /* 避免寬螢幕按鈕過長 */
     }
-    div.stButton > button:hover { background-color: #FFD600 !important; color: #000000 !important; }
-
-    .comic-panel { background-color: #FFFFFF; border: 5px solid #000000; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 6px 6px 0px #FF9800; }
-    img { border-radius: 15px; border: 3px solid #000000; margin-bottom: 10px; }
+    div.stButton > button:hover { background-color: #FFD600 !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# ================= 封裝故事引擎 =================
-class StoryEngine:
-    def __init__(self, story_key):
-        self.story_key = story_key
-        self.story_data = STORIES[story_key]
-        self.reset()
-
-    def reset(self):
-        self.current_node = "1_START"
-        self.history = []
-
-    def get_current_step(self):
-        try:
-            return int(self.current_node.split("_")[0])
-        except:
-            return 1
-
-    def get_current_node_data(self):
-        return self.story_data["nodes"].get(self.current_node, {})
-
-    def is_ending(self):
-        return self.current_node == "END"
-
-    def choose(self, title, choice_letter, choice_text):
-        self.history.append((title, choice_text))
-        next_step = self.get_current_step() + 1
-        
-        if next_step <= 6:
-            next_node = f"{next_step}_{choice_letter}"
-            if next_node not in self.story_data["nodes"]:
-                next_node = f"{next_step}_A"
-            self.current_node = next_node
-            
-    def finish_story(self, title):
-        self.history.append((title, "故事圓滿結束！ The End!"))
-        self.current_node = "END"
-
-    def jump_to_page(self, page_num):
-        self.history = []
-        if page_num == 1:
-            self.current_node = "1_START"
+# ----------------- GitHub API 呼叫函式 -----------------
+def call_github_ai(token, messages, max_tokens=800):
+    url = "https://models.inference.ai.azure.com/chat/completions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {token}"
+    }
+    payload = {
+        "messages": messages,
+        "model": "gpt-4o-mini",
+        "temperature": 0.8,
+        "max_tokens": max_tokens
+    }
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=25)
+        if response.status_code == 200:
+            return response.json()["choices"][0]["message"]["content"]
         else:
-            self.current_node = f"{page_num}_A"
+            # 兒童友善的錯誤訊息
+            return f"❌ 哎呀！火鷹俠暫時飛走咗去拉筋，請爸爸檢查一下通訊密碼！(Error: {response.status_code})"
+    except Exception as e:
+        return f"❌ 火鷹俠對講機信號微弱，請稍後再試！({str(e)})"
 
-# 💥 自動版本鎖定：確保每次部署都能完全刷掉舊 Session 快取
-APP_VERSION = "v3.0_clean"
-if "app_version" not in st.session_state or st.session_state.app_version != APP_VERSION:
-    st.session_state.app_version = APP_VERSION
-    st.session_state.engine = StoryEngine("Story1")
-
-engine = st.session_state.engine
-
-# ================= 側邊欄 UI =================
-st.sidebar.markdown("## 📚 選擇故事 (Select Story)")
-story_options = {k: v["name_tc"] for k, v in STORIES.items()}
-selected_story_title = st.sidebar.radio(
-    "今日想聽邊個故事？", 
-    list(story_options.values()), 
-    index=list(story_options.keys()).index(engine.story_key)
-)
-
-selected_key = [k for k, v in story_options.items() if v == selected_story_title][0]
-if selected_key != engine.story_key:
-    st.session_state.engine = StoryEngine(selected_key)
-    st.rerun()
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("## 📖 快速跳頁 (Jump to Page)")
-page_options = ["第 1 頁", "第 2 頁", "第 3 頁", "第 4 頁", "第 5 頁", "第 6 頁"]
-current_step = engine.get_current_step() if not engine.is_ending() else 6
-
-selected_page_str = st.sidebar.radio("選擇頁數：", page_options, index=current_step - 1)
-jump_page_num = page_options.index(selected_page_str) + 1
-
-if st.sidebar.button("🚀 跳轉到此頁 (Jump Now)"):
-    engine.jump_to_page(jump_page_num)
-    st.rerun()
-
-st.sidebar.markdown("---")
-if st.sidebar.button("🔄 重頭開始 (Start Over)"):
-    engine.reset()
-    st.rerun()
-
-# ================= 主介面渲染 =================
-story_title_tc = engine.story_data["name_tc"]
-story_title_en = engine.story_data["name_en"]
-
-st.markdown(f'<p class="kids-title">🦸‍♂️ {story_title_tc} 🦸‍♂️</p>', unsafe_allow_html=True)
-st.markdown(f'<p class="en-title">{story_title_en}</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 雙語爆笑繪本 App")
+# ----------------- 標題與簡介 -----------------
+st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠全人教育故事館 🚀</p>', unsafe_allow_html=True)
+st.markdown('<p class="en-title">Firebird Protection: Whole-Person Education Hub</p>', unsafe_allow_html=True)
+st.caption("Son & Dad Exclusive | 傳承全人精神 | 雙語繪本 × 成長對講機")
 st.markdown("---")
 
-if not engine.is_ending():
-    stage = engine.get_current_node_data()
-    step = engine.get_current_step()
-    
-    st.progress(step / 6, text=f"📖 故事進度 Story Progress：{step} / 6")
-    
-    st.markdown(f'<p class="kids-sfx">{stage.get("title_tc", "")}<br><span style="font-size:1.1rem;">{stage.get("title_en", "")}</span></p>', unsafe_allow_html=True)
-    if "sfx" in stage:
-        st.markdown(f'<p class="kids-sfx" style="color:#D32F2F !important;">{stage["sfx"]}</p>', unsafe_allow_html=True)
+# ================= 側邊欄 (家長設定區) =================
+with st.sidebar.expander("👨‍💼 家長設定區 (Parent Zone)", expanded=True):
+    st.markdown("請在此輸入 API 憑證。此密碼僅用於本次連線，系統不會紀錄或儲存。")
+    github_token = st.text_input("通訊密碼 (GitHub Token):", type="password")
 
-    # 💥 全新超防錯圖片顯示邏輯
-    img_list = []
-    if "images" in stage and isinstance(stage["images"], list):
-        img_list = stage["images"]
-    elif "image" in stage and isinstance(stage["image"], str):
-        img_list = [stage["image"]]
-
-    if len(img_list) > 1:
-        cols = st.columns(len(img_list))
-        for idx, url in enumerate(img_list):
-            cols[idx].image(url, use_column_width=True)
-    elif len(img_list) == 1:
-        st.image(img_list[0], use_column_width=True)
-
-    st.markdown(f"""
-    <div class="kids-speech-bubble">
-    <p class="tc-story">💬 {stage.get("story_tc", "")}</p>
-    <p class="en-story">{stage.get("story_en", "")}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    if step < 6:
-        choices_dict = stage.get("choices", {})
-        option_keys = list(choices_dict.keys())
-        option_texts = [f"{k}. {choices_dict[k]}" for k in option_keys]
-        
-        selected_text = st.radio("👉 請做出超搞笑抉擇 (Choose your action):", option_texts)
-        selected_letter = selected_text[0] 
-        
-        if st.button("🔥 確定！翻去下一頁！ (Next Page!)"):
-            engine.choose(stage.get("title_tc", ""), selected_letter, selected_text)
-            st.rerun()
-    else:
-        if st.button("🎉 看完了！印出專屬雙語故事書！ (Print Storybook!)"):
-            engine.finish_story(stage.get("title_tc", ""))
-            st.rerun()
-
+if not github_token:
+    st.warning("👈 請爸爸先在左邊的「家長設定區」輸入通訊密碼，幫火鷹俠對講機充電喔！")
 else:
-    st.balloons()
-    st.success("🎉 恭喜！成功解鎖了爆笑雙語結局！ Congratulations!")
-    
-    st.header("🖼️ 專屬雙語故事繪本 (Our Bilingual Storybook)")
-    for i, (title, choice) in enumerate(engine.history, 1):
-        st.markdown(f"""
-        <div class="comic-panel">
-        <h2 style="font-size: 1.6rem; color: #00838F;">📖 {title}</h2>
-        <p style="font-size: 1.3rem; color: #000000; font-weight: bold;"><b>💥 我們的行動 (Action)：</b><br>{choice}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    if st.button("🔄 再玩一次！探索其他結局！ (Play Again!)"):
-        engine.reset()
-        st.rerun()
+    tab1, tab2 = st.tabs(["📖 互動故事冒險", "📻 火鷹俠全能學習對講機"])
 
-st.markdown("---")
-st.caption("🔥 Firebird Protection App | Son & Dad Exclusive")
+    # 🛡️ 核心教育精神 System Prompt
+    base_education_rules = """你扮演超級英雄「火鷹俠 (Firebird)」，專門陪一位 6 歲、聰明且充滿好奇心的小隊長互動。
+    
+【核心教育藍圖：全人為本，學子為先】：
+1. 正向教育與成長型思維 (Growth Mindset)：以愛與關懷為基石，當小隊長面對挑戰時，教導他永不放棄。
+2. 啟迪多元潛能：培養他明辨是非、包容多元價值、團隊合作與公民責任感。
+3. 精通三語技能 (3-Literacy)：對話需自然融合廣東話/繁體中文、地道英文，並巧妙加入科學與生活常識。
+
+【互動與引導規範】：
+1. 蘇格拉底式啟發：永遠不直接給出標準答案，而是用幽默例子引導他主動探索。
+2. 倫理與安全護欄：嚴格禁止色情、暴力、危險行為，價值觀必須健康正向。
+3. 語言與視覺：親切生動的廣東話為主，附帶英文對照，語氣天馬行空幽默，帶有大量生動 Emoji (如 🚨🦖🍕🔥🦆)！"""
+
+    # ================= TAB 1：互動故事 =================
+    with tab1:
+        if "ai_history" not in st.session_state:
+            st.session_state.ai_history = []
+
+        story_system_prompt = base_education_rules + """\n【任務】：寫互動故事繪本。將科學、數學或常識小謎題無縫融入情節中！
+每一頁必須包含：
+- 中文故事情節 (帶大量 Emoji)
+- English translation
+- 三個超有創意、結合解難能力的搞笑選項：A、B、C
+- 注意：如果小隊長輸入了自訂行動，請將其視為「D 選項」，並順著他的天馬行空想法編寫下一頁，最後依然給出新的 A/B/C 選項供選擇。"""
+
+        if len(st.session_state.ai_history) == 0:
+            if st.button("🚀 點擊開始全新的火鷹俠冒險！"):
+                messages = [
+                    {"role": "system", "content": story_system_prompt},
+                    {"role": "user", "content": "請為《火鷹俠》創作第 1 頁的全新爆笑開頭！設定一個涉及宇宙、科學或數學謎題的搞笑危機！"}
+                ]
+                with st.spinner("🚀 火鷹俠正在登場中..."):
+                    reply = call_github_ai(github_token, messages, max_tokens=800)
+                    st.session_state.ai_history.append({"role": "assistant", "content": reply})
+                st.rerun()
+
+        for msg in st.session_state.ai_history:
+            if msg["role"] == "assistant":
+                st.markdown(f'<div class="story-card"><p class="story-text">{msg["content"]}</p></div>', unsafe_allow_html=True)
+            elif msg["role"] == "user":
+                # 優化：讓使用者的選擇視覺化更清晰
+                with st.chat_message("user", avatar="🦸‍♂️"):
+                    st.write(f"**我們的決定：** {msg['content']}")
+
+        if len(st.session_state.ai_history) > 0:
+            st.markdown("---")
+            user_choice = st.text_input("👉 選擇 A/B/C，或發揮想像力自己寫行動：", key="story_input")
+            
+            if st.button("🔥 確定！翻去下一頁！ (Next Page!)"):
+                if user_choice:
+                    api_messages = [{"role": "system", "content": story_system_prompt}]
+                    for m in st.session_state.ai_history:
+                        api_messages.append(m)
+                    
+                    api_messages.append({"role": "user", "content": f"我選擇了：{user_choice}。請繼續寫下一頁故事！帶大量 Emoji 與選項 A, B, C！"})
+                    
+                    st.session_state.ai_history.append({"role": "user", "content": user_choice})
+                    
+                    with st.spinner("🚀 火鷹俠正在飛往下一個場景..."):
+                        reply = call_github_ai(github_token, api_messages, max_tokens=800)
+                        st.session_state.ai_history.append({"role": "assistant", "content": reply})
+                    st.rerun()
+
+    # ================= TAB 2：全能學習對講機 =================
+    with tab2:
+        st.markdown("### 📻 火鷹俠全能學習對講機 (Talk & Learn)")
+        st.caption("小隊長可以隨時喺度同火鷹俠聊天、問功課，或者討論宇宙知識喔！")
+
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
+        # 針對對講機縮短字數與句子要求
+        chat_system_prompt = base_education_rules + """\n【任務】：對講機全能學習導師。
+- 緊記「成長型思維」，遇到困難鼓勵他。
+- 回答中西文化、中英數常識問題，善用生活化例子。
+- **重要限制：回覆請保持簡短精煉，每段不超過 5 句話，確保 6 歲兒童有耐心閱讀。**
+- 保持廣東話 + 雙語對話 + 大量 Emoji！"""
+
+        for message in st.session_state.chat_history:
+            with st.chat_message(message["role"], avatar="🦸‍♂️" if message["role"] == "user" else "📻"):
+                st.markdown(message["content"])
+
+        if prompt := st.chat_input("📻 對火鷹俠說話... (例如：恐龍點解會絕種？)"):
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
+            with st.chat_message("user", avatar="🦸‍♂️"):
+                st.markdown(prompt)
+
+            api_chat_messages = [{"role": "system", "content": chat_system_prompt}]
+            for m in st.session_state.chat_history:
+                api_chat_messages.append(m)
+
+            with st.chat_message("assistant", avatar="📻"):
+                with st.spinner("📻 火鷹俠正在思考並按對講機回覆你..."):
+                    # 降低 token 消耗以加快回覆速度
+                    chat_reply = call_github_ai(github_token, api_chat_messages, max_tokens=500)
+                    st.markdown(chat_reply)
+                    st.session_state.chat_history.append({"role": "assistant", "content": chat_reply})
+
+# 側邊欄重置
+st.sidebar.markdown("---")
+if st.sidebar.button("🔄 重新開始故事與對話"):
+    st.session_state.ai_history = []
+    st.session_state.chat_history = []
+    st.rerun()
