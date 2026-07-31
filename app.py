@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🎨 兒童雙語與響應式 CSS
+# 🎨 兒童雙語與響應式 CSS 升級
 st.markdown("""
     <style>
     .stApp { background-color: #E0F7FA; color: #000000 !important; }
@@ -31,32 +31,32 @@ st.markdown("""
     [data-testid="stSidebar"] { background-color: #1E293B !important; }
     [data-testid="stSidebar"] h2, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label { color: #FFFFFF !important; }
 
-    div.stButton {
-        display: flex;
-        justify-content: center;
-    }
+    div.stButton { display: flex; justify-content: center; }
     div.stButton > button {
         background-color: #FFEB3B !important; color: #000000 !important;
         font-size: 1.3rem !important; font-weight: 900 !important;
         border: 4px solid #000000 !important; border-radius: 16px !important;
         padding: 10px 20px !important; box-shadow: 4px 4px 0px #000000 !important;
-        width: 100% !important;
-        max-width: 400px !important;
+        width: 100% !important; max-width: 400px !important;
     }
     div.stButton > button:hover { background-color: #FFD600 !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# ----------------- GitHub API 呼叫函式 (修正 Endpoint) -----------------
+# ----------------- GitHub 免費 API 呼叫函式 (多通道自動兼容) -----------------
 def call_github_ai(token, messages, max_tokens=800):
-    # 💥 關鍵修復：改回標準 GitHub Open-API Endpoint 網址
-    url = "https://models.inference.ai.azure.com/chat/completions"
     clean_token = token.strip() if token else ""
+    
+    # 備選 GitHub API Endpoints
+    endpoints = [
+        "https://models.inference.ai.azure.com/chat/completions",
+        "https://api.githubcopilot.com/chat/completions"
+    ]
     
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {clean_token}",
-        "User-Agent": "FirebirdApp/1.0"
+        "User-Agent": "GitHub-Free-Client/1.0"
     }
     payload = {
         "messages": messages,
@@ -65,21 +65,15 @@ def call_github_ai(token, messages, max_tokens=800):
         "max_tokens": max_tokens
     }
     
-    # 自動備用機制：如果 Azure Endpoint 被拒絕，嘗試標準 GitHub API 通道
-    try:
-        response = requests.post(url, json=payload, headers=headers, timeout=25)
-        if response.status_code == 200:
-            return response.json()["choices"][0]["message"]["content"]
-        
-        # 備用通道：GitHub Models 原生路徑
-        fallback_url = "https://api.githubcopilot.com/chat/completions"
-        fallback_response = requests.post(fallback_url, json=payload, headers=headers, timeout=20)
-        if fallback_response.status_code == 200:
-            return fallback_response.json()["choices"][0]["message"]["content"]
+    for url in endpoints:
+        try:
+            response = requests.post(url, json=payload, headers=headers, timeout=20)
+            if response.status_code == 200:
+                return response.json()["choices"][0]["message"]["content"]
+        except:
+            continue
             
-        return f"ERROR_{response.status_code}"
-    except Exception as e:
-        return f"❌ 火鷹俠對講機信號微弱，請稍後再試！({str(e)})"
+    return "ERROR_401"
 
 # ----------------- 標題與簡介 -----------------
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠全人教育故事館 🚀</p>', unsafe_allow_html=True)
@@ -90,11 +84,11 @@ st.markdown("---")
 # ================= 自動讀取 Secrets 或 側邊欄設定 =================
 github_token = ""
 
-# 1. 優先嘗試讀取 Streamlit Secrets
 if "GITHUB_TOKEN" in st.secrets:
     github_token = st.secrets["GITHUB_TOKEN"]
+elif "AI_TOKEN" in st.secrets:
+    github_token = st.secrets["AI_TOKEN"]
 else:
-    # 2. 備用方案：側邊欄手動輸入
     with st.sidebar.expander("👨‍💼 家長設定區 (Parent Zone)", expanded=True):
         st.markdown("請在此輸入 API 憑證：")
         github_token = st.text_input("通訊密碼 (GitHub Token):", type="password")
@@ -104,7 +98,7 @@ if not github_token:
 else:
     tab1, tab2 = st.tabs(["📖 互動故事冒險", "📻 火鷹俠全能學習對講機"])
 
-    # 🛡️ 核心教育精神 System Prompt
+    # 🛡️ 核心教育精神 System Prompt (融入 A-School 全人教育理念)
     base_education_rules = """你扮演超級英雄「火鷹俠 (Firebird)」，專門陪一位 6 歲、聰明且充滿好奇心的小隊長互動。
     
 【核心教育藍圖：全人為本，學子為先】：
@@ -137,8 +131,8 @@ else:
                 ]
                 with st.spinner("🚀 火鷹俠正在登場中..."):
                     reply = call_github_ai(github_token, messages, max_tokens=800)
-                    if reply.startswith("ERROR_"):
-                        st.error(f"❌ 通訊失敗 ({reply})！請確認 Secrets 中的 GitHub Token 設定。")
+                    if reply == "ERROR_401":
+                        st.error("❌ 驗證失敗！請點擊左側「🔄 重新開始故事與對話」清除快取重試。")
                     else:
                         st.session_state.ai_history.append({"role": "assistant", "content": reply})
                         st.rerun()
@@ -161,13 +155,12 @@ else:
                         api_messages.append(m)
                     
                     api_messages.append({"role": "user", "content": f"我選擇了：{user_choice}。請繼續寫下一頁故事！帶大量 Emoji 與選項 A, B, C！"})
-                    
                     st.session_state.ai_history.append({"role": "user", "content": user_choice})
                     
                     with st.spinner("🚀 火鷹俠正在飛往下一個場景..."):
                         reply = call_github_ai(github_token, api_messages, max_tokens=800)
-                        if reply.startswith("ERROR_"):
-                            st.error(f"❌ 通訊失敗 ({reply})！請重試。")
+                        if reply == "ERROR_401":
+                            st.error("❌ 通訊失敗，請重新嘗試。")
                             st.session_state.ai_history.pop()
                         else:
                             st.session_state.ai_history.append({"role": "assistant", "content": reply})
@@ -203,8 +196,8 @@ else:
             with st.chat_message("assistant", avatar="📻"):
                 with st.spinner("📻 火鷹俠正在思考並按對講機回覆你..."):
                     chat_reply = call_github_ai(github_token, api_chat_messages, max_tokens=500)
-                    if chat_reply.startswith("ERROR_"):
-                        st.error(f"❌ 通訊失敗 ({chat_reply})，請檢查 Secrets 中的 Token。")
+                    if chat_reply == "ERROR_401":
+                        st.error("❌ 通訊失敗，請重試。")
                         st.session_state.chat_history.pop()
                     else:
                         st.markdown(chat_reply)
