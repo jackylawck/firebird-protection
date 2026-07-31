@@ -16,7 +16,7 @@ st.markdown("""
     .kids-title { font-size: clamp(1.8rem, 5vw, 2.5rem) !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; }
     .en-title { font-size: clamp(1rem, 3vw, 1.4rem) !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
     
-    /* 故事卡片與響應式字體 */
+    /* 故事卡片 */
     .story-card {
         background: #FFFFFF;
         border: 4px solid #000000;
@@ -42,7 +42,7 @@ st.markdown("""
         border: 4px solid #000000 !important; border-radius: 16px !important;
         padding: 10px 20px !important; box-shadow: 4px 4px 0px #000000 !important;
         width: 100% !important;
-        max-width: 400px !important; /* 避免寬螢幕按鈕過長 */
+        max-width: 400px !important;
     }
     div.stButton > button:hover { background-color: #FFD600 !important; }
     </style>
@@ -66,7 +66,6 @@ def call_github_ai(token, messages, max_tokens=800):
         if response.status_code == 200:
             return response.json()["choices"][0]["message"]["content"]
         else:
-            # 兒童友善的錯誤訊息
             return f"❌ 哎呀！火鷹俠暫時飛走咗去拉筋，請爸爸檢查一下通訊密碼！(Error: {response.status_code})"
     except Exception as e:
         return f"❌ 火鷹俠對講機信號微弱，請稍後再試！({str(e)})"
@@ -77,13 +76,20 @@ st.markdown('<p class="en-title">Firebird Protection: Whole-Person Education Hub
 st.caption("Son & Dad Exclusive | 傳承全人精神 | 雙語繪本 × 成長對講機")
 st.markdown("---")
 
-# ================= 側邊欄 (家長設定區) =================
-with st.sidebar.expander("👨‍💼 家長設定區 (Parent Zone)", expanded=True):
-    st.markdown("請在此輸入 API 憑證。此密碼僅用於本次連線，系統不會紀錄或儲存。")
-    github_token = st.text_input("通訊密碼 (GitHub Token):", type="password")
+# ================= 自動讀取 Secrets 或 側邊欄設定 =================
+github_token = ""
+
+# 1. 優先嘗試讀取 Streamlit Secrets
+if "GITHUB_TOKEN" in st.secrets:
+    github_token = st.secrets["GITHUB_TOKEN"]
+else:
+    # 2. 備用方案：側邊欄手動輸入
+    with st.sidebar.expander("👨‍💼 家長設定區 (Parent Zone)", expanded=True):
+        st.markdown("請在此輸入 API 憑證（此密碼僅用於本次連線）：")
+        github_token = st.text_input("通訊密碼 (GitHub Token):", type="password")
 
 if not github_token:
-    st.warning("👈 請爸爸先在左邊的「家長設定區」輸入通訊密碼，幫火鷹俠對講機充電喔！")
+    st.warning("👈 請爸爸先在 Streamlit Secrets 或左邊「家長設定區」設定通訊密碼，幫火鷹俠對講機充電喔！")
 else:
     tab1, tab2 = st.tabs(["📖 互動故事冒險", "📻 火鷹俠全能學習對講機"])
 
@@ -127,7 +133,6 @@ else:
             if msg["role"] == "assistant":
                 st.markdown(f'<div class="story-card"><p class="story-text">{msg["content"]}</p></div>', unsafe_allow_html=True)
             elif msg["role"] == "user":
-                # 優化：讓使用者的選擇視覺化更清晰
                 with st.chat_message("user", avatar="🦸‍♂️"):
                     st.write(f"**我們的決定：** {msg['content']}")
 
@@ -158,11 +163,10 @@ else:
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
 
-        # 針對對講機縮短字數與句子要求
         chat_system_prompt = base_education_rules + """\n【任務】：對講機全能學習導師。
 - 緊記「成長型思維」，遇到困難鼓勵他。
 - 回答中西文化、中英數常識問題，善用生活化例子。
-- **重要限制：回覆請保持簡短精煉，每段不超過 5 句話，確保 6 歲兒童有耐心閱讀。**
+- **重要限制：回覆請保持簡短精練，每段不超過 5 句話，確保 6 歲兒童有耐心閱讀。**
 - 保持廣東話 + 雙語對話 + 大量 Emoji！"""
 
         for message in st.session_state.chat_history:
@@ -180,7 +184,6 @@ else:
 
             with st.chat_message("assistant", avatar="📻"):
                 with st.spinner("📻 火鷹俠正在思考並按對講機回覆你..."):
-                    # 降低 token 消耗以加快回覆速度
                     chat_reply = call_github_ai(github_token, api_chat_messages, max_tokens=500)
                     st.markdown(chat_reply)
                     st.session_state.chat_history.append({"role": "assistant", "content": chat_reply})
