@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from story_data import STORIES, get_ending_key
 
 # ----------------- 頁面基礎配置 -----------------
@@ -17,19 +16,19 @@ st.markdown("""
     .kids-title { font-size: clamp(1.8rem, 5vw, 2.5rem) !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; }
     .en-title { font-size: clamp(1rem, 3vw, 1.4rem) !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
     
-    .story-card { background: #FFFFFF; border: 4px solid #000000; border-radius: 20px; padding: 20px; margin: 15px 0; box-shadow: 6px 6px 0px #000000; }
-    .bad-card { background: #FFEBEE; border: 4px solid #D32F2F; border-radius: 20px; padding: 20px; margin: 15px 0; box-shadow: 6px 6px 0px #D32F2F; }
-    .achievement-card { background: #FFF9C4; border: 4px solid #FBC02D; border-radius: 20px; padding: 20px; margin: 15px 0; text-align: center; box-shadow: 6px 6px 0px #000000; }
+    .story-card { background: #FFFFFF; border: 4px solid #000000; border-radius: 20px; padding: 18px; margin: 10px 0; box-shadow: 6px 6px 0px #000000; }
+    .bad-card { background: #FFEBEE; border: 4px solid #D32F2F; border-radius: 20px; padding: 18px; margin: 10px 0; box-shadow: 6px 6px 0px #D32F2F; }
+    .achievement-card { background: #FFF9C4; border: 4px solid #FBC02D; border-radius: 20px; padding: 18px; margin: 10px 0; text-align: center; box-shadow: 6px 6px 0px #000000; }
 
-    .story-title { font-size: 1.5rem !important; color: #D81B60 !important; font-weight: 900; margin-bottom: 5px; }
-    .story-progress { font-size: 0.9rem !important; color: #00838F !important; font-weight: bold; background: #E0F7FA; padding: 4px 12px; border-radius: 10px; display: inline-block; margin-bottom: 10px; }
-    .story-sfx { font-size: 1.2rem !important; color: #FF9800 !important; font-weight: 900; margin-bottom: 10px; }
-    .story-text-tc { font-size: 1.3rem !important; line-height: 1.6; font-weight: bold; color: #000000 !important; }
-    .story-text-en { font-size: 1.1rem !important; line-height: 1.5; font-weight: 600; color: #424242 !important; margin-top: 8px; }
-    .bad-reason-text { font-size: 1.2rem !important; font-weight: bold; color: #D32F2F !important; margin-top: 15px; padding: 10px; border-left: 5px solid #D32F2F; background: #FFCDD2; line-height: 1.5;}
+    .story-title { font-size: 1.4rem !important; color: #D81B60 !important; font-weight: 900; margin-bottom: 5px; }
+    .story-progress { font-size: 0.85rem !important; color: #00838F !important; font-weight: bold; background: #E0F7FA; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-bottom: 8px; }
+    .story-sfx { font-size: 1.1rem !important; color: #FF9800 !important; font-weight: 900; margin-bottom: 8px; }
+    .story-text-tc { font-size: 1.25rem !important; line-height: 1.5; font-weight: bold; color: #000000 !important; }
+    .story-text-en { font-size: 1.05rem !important; line-height: 1.4; font-weight: 600; color: #424242 !important; margin-top: 6px; }
+    .bad-reason-text { font-size: 1.1rem !important; font-weight: bold; color: #D32F2F !important; margin-top: 12px; padding: 8px; border-left: 5px solid #D32F2F; background: #FFCDD2; line-height: 1.4;}
 
     div.stButton { display: flex; justify-content: center; }
-    div.stButton > button { background-color: #FFEB3B !important; color: #000000 !important; font-size: 1.2rem !important; font-weight: 900 !important; border: 4px solid #000000 !important; border-radius: 16px !important; padding: 12px 20px !important; box-shadow: 4px 4px 0px #000000 !important; width: 100% !important; max-width: 650px !important; margin-bottom: 12px !important; white-space: pre-wrap; }
+    div.stButton > button { background-color: #FFEB3B !important; color: #000000 !important; font-size: 1.15rem !important; font-weight: 900 !important; border: 4px solid #000000 !important; border-radius: 16px !important; padding: 10px 16px !important; box-shadow: 4px 4px 0px #000000 !important; width: 100% !important; max-width: 650px !important; margin-bottom: 10px !important; white-space: pre-wrap; }
     div.stButton > button:hover { background-color: #FFD600 !important; }
     
     [data-testid="stSidebar"] { background-color: #1E293B !important; }
@@ -37,22 +36,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ----------------- 📍 置頂錨點與跳轉指令 -----------------
-st.markdown('<div id="top-anchor"></div>', unsafe_allow_html=True)
-
-def scroll_to_top():
-    # 注入小段 JS 促使手機瀏覽器強制捲動回頁面頂部
-    components.html("""
-        <script>
-            window.parent.document.getElementById('top-anchor').scrollIntoView({behavior: 'smooth'});
-        </script>
-    """, height=0)
-
-# ----------------- 標題 -----------------
+# ----------------- 標題與頂部標記 -----------------
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠全人教育故事館 🚀</p>', unsafe_allow_html=True)
-st.markdown('<p class="en-title">Firebird Protection: Interactive Branching Stories</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 純文字手機最佳化模式 | 自動置頂閱讀")
-st.markdown("---")
+st.markdown('<p class="en-title">Firebird Protection: Interactive Hub</p>', unsafe_allow_html=True)
 
 # ----------------- ⚙️ 初始化遊戲引擎 -----------------
 def reset_game():
@@ -118,11 +104,10 @@ try:
 except:
     progress_text = "特殊進度 (Special Event)"
 
-# ----------------- 📖 渲染場景 -----------------
+# ----------------- 📖 渲染劇情卡片 (放在最上方，貼近視線) -----------------
 is_bad_ending = scene.get("is_bad_ending", False)
 
 if is_bad_ending:
-    # 💥 壞結局渲染
     st.error("💡【火鷹俠的成長型思維課】：失敗不可怕！最重要是我們從中學到什麼，然後再試一次！\n*(Growth Mindset: Failure is just a chance to learn. Let's try again!)*")
     st.markdown(f'''
         <div class="bad-card">
@@ -137,22 +122,19 @@ if is_bad_ending:
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("↩️ 穿越時空！返回上一頁重新選擇！\n(Time Travel! Go back and choose again!)"):
+        if st.button("↩️ 穿越時空！返回上一頁重新選擇！\n(Go back and choose again!)"):
             if st.session_state.history:
                 st.session_state.current_scene = st.session_state.history.pop()
                 st.session_state.stats = st.session_state.history_stats.pop()
             else:
                 reset_game()
-            scroll_to_top()
             st.rerun()
     with col2:
         if st.button("🔄 重新開始整個故事\n(Restart Story)"):
             reset_game()
-            scroll_to_top()
             st.rerun()
 
 elif scene_key.startswith("6_"):
-    # 🏆 勝利結局渲染
     st.balloons()
     ending_data = {
         "6_LEADER": ("🏆 結局：全人小領袖 (Whole-Person Leader)", "兼具勇氣與關懷，你是天生的全人小領袖！<br>(With courage and care, you are a born Whole-Person Leader!)"),
@@ -179,11 +161,10 @@ elif scene_key.startswith("6_"):
     
     if st.button("🔄 挑戰其他路線與故事\n(Play Again)"):
         reset_game()
-        scroll_to_top()
         st.rerun()
 
 else:
-    # 🎯 普通場景渲染 (完全移除圖片顯示邏輯)
+    # 普通劇情卡片
     st.markdown(f'''
         <div class="story-card">
             <span class="story-progress">📌 冒險進度 (Progress)：{progress_text}</span>
@@ -194,27 +175,23 @@ else:
         </div>
     ''', unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown("### 🎯 小隊長，下一步你要怎麼做？\n*(What will you do next?)*")
-    
+    # ----------------- 🎯 下一步選項 (緊接在劇情卡片正下方) -----------------
     choices = scene.get("choices", {})
     if choices:
+        st.markdown("### 🎯 小隊長，下一步你要怎麼做？ *(What will you do next?)*")
         choices_items = list(choices.items())
         for idx, (opt_key, opt_data) in enumerate(choices_items):
             letter = chr(ord('A') + idx)
             
             if st.button(f"👉 選項 {letter}: \n{opt_data['text']}", key=f"btn_{scene_key}_{idx}"):
-                
-                # 1. 保存歷史記錄
+                # 記錄歷史與狀態
                 st.session_state.history.append(scene_key)
                 st.session_state.history_stats.append(st.session_state.stats.copy())
                 
-                # 2. 累加屬性點數
                 if "effect" in opt_data:
                     for k, v in opt_data["effect"].items():
                         st.session_state.stats[k] = max(0, st.session_state.stats[k] + v)
                 
-                # 3. 處理跳轉與壞結局
                 if opt_data.get("is_bad", False):
                     st.session_state.bad_reason = opt_data.get("bad_reason", "你的選擇帶來了意外後果！(Unexpected consequences!)")
                     st.session_state.current_scene = opt_data["next"]
@@ -224,12 +201,10 @@ else:
                     else:
                         st.session_state.current_scene = opt_data["next"]
                 
-                # 4. 執行自動回頂與重新渲染
-                scroll_to_top()
+                # 觸發原生重載，手機頁面會極速刷至最新的頂部卡片
                 st.rerun()
 
 st.sidebar.markdown("---")
 if st.sidebar.button("🔄 返回故事第一頁\n(Back to Page 1)"):
     reset_game()
-    scroll_to_top()
     st.rerun()
