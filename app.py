@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# ----------------- 🎨 兒童雙語與漫畫風格 CSS -----------------
+# ----------------- 🎨 兒童友善與漫畫風格 CSS -----------------
 st.markdown("""
     <style>
     .stApp { background-color: #E0F7FA; color: #000000 !important; }
@@ -16,52 +16,19 @@ st.markdown("""
     .kids-title { font-size: clamp(1.8rem, 5vw, 2.5rem) !important; color: #00838F !important; font-weight: 900; text-align: center; margin-bottom: 5px; }
     .en-title { font-size: clamp(1rem, 3vw, 1.4rem) !important; color: #006064 !important; font-weight: 900; text-align: center; margin-bottom: 15px; }
     
-    /* 故事卡片 */
-    .story-card {
-        background: #FFFFFF;
-        border: 4px solid #000000;
-        border-radius: 20px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 6px 6px 0px #000000;
-    }
-    
-    /* 💥 壞結局卡片 */
-    .bad-card {
-        background: #FFEBEE;
-        border: 4px solid #D32F2F;
-        border-radius: 20px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 6px 6px 0px #D32F2F;
-    }
-
-    /* 🏆 勝利結局卡片 */
-    .achievement-card {
-        background: #FFF9C4;
-        border: 4px solid #FBC02D;
-        border-radius: 20px;
-        padding: 20px;
-        margin: 15px 0;
-        text-align: center;
-        box-shadow: 6px 6px 0px #000000;
-    }
+    .story-card { background: #FFFFFF; border: 4px solid #000000; border-radius: 20px; padding: 20px; margin: 15px 0; box-shadow: 6px 6px 0px #000000; }
+    .bad-card { background: #FFEBEE; border: 4px solid #D32F2F; border-radius: 20px; padding: 20px; margin: 15px 0; box-shadow: 6px 6px 0px #D32F2F; }
+    .achievement-card { background: #FFF9C4; border: 4px solid #FBC02D; border-radius: 20px; padding: 20px; margin: 15px 0; text-align: center; box-shadow: 6px 6px 0px #000000; }
 
     .story-title { font-size: 1.5rem !important; color: #D81B60 !important; font-weight: 900; margin-bottom: 5px; }
+    .story-progress { font-size: 0.9rem !important; color: #00838F !important; font-weight: bold; background: #E0F7FA; padding: 4px 12px; border-radius: 10px; display: inline-block; margin-bottom: 10px; }
     .story-sfx { font-size: 1.2rem !important; color: #FF9800 !important; font-weight: 900; margin-bottom: 10px; }
     .story-text-tc { font-size: 1.3rem !important; line-height: 1.6; font-weight: bold; color: #000000 !important; }
     .story-text-en { font-size: 1.1rem !important; line-height: 1.5; font-weight: 600; color: #424242 !important; margin-top: 8px; }
+    .bad-reason-text { font-size: 1.2rem !important; font-weight: bold; color: #D32F2F !important; margin-top: 15px; padding: 10px; border-left: 5px solid #D32F2F; background: #FFCDD2;}
 
-    /* 按鈕樣式 */
     div.stButton { display: flex; justify-content: center; }
-    div.stButton > button {
-        background-color: #FFEB3B !important; color: #000000 !important;
-        font-size: 1.2rem !important; font-weight: 900 !important;
-        border: 4px solid #000000 !important; border-radius: 16px !important;
-        padding: 12px 20px !important; box-shadow: 4px 4px 0px #000000 !important;
-        width: 100% !important; max-width: 550px !important;
-        margin-bottom: 12px !important;
-    }
+    div.stButton > button { background-color: #FFEB3B !important; color: #000000 !important; font-size: 1.2rem !important; font-weight: 900 !important; border: 4px solid #000000 !important; border-radius: 16px !important; padding: 12px 20px !important; box-shadow: 4px 4px 0px #000000 !important; width: 100% !important; max-width: 550px !important; margin-bottom: 12px !important; }
     div.stButton > button:hover { background-color: #FFD600 !important; }
     
     [data-testid="stSidebar"] { background-color: #1E293B !important; }
@@ -69,10 +36,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ----------------- 標題與簡介 -----------------
+# ----------------- 標題 -----------------
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠全人教育故事館 🚀</p>', unsafe_allow_html=True)
 st.markdown('<p class="en-title">Firebird Protection: Interactive Branching Stories</p>', unsafe_allow_html=True)
-st.caption("Son & Dad Exclusive | 狀態機敘事 × 挫折學習 × 多重結局")
+st.caption("Son & Dad Exclusive | 狀態機敘事 × 挫折學習 × 多重結局解鎖")
 st.markdown("---")
 
 # ----------------- ⚙️ 初始化遊戲引擎 -----------------
@@ -81,6 +48,7 @@ def reset_game():
     st.session_state.stats = {"bravery": 0, "creativity": 0, "empathy": 0}
     st.session_state.history = []
     st.session_state.history_stats = []
+    st.session_state.bad_reason = ""
 
 if "stats" not in st.session_state:
     st.session_state.stats = {"bravery": 0, "creativity": 0, "empathy": 0}
@@ -88,6 +56,10 @@ if "history" not in st.session_state:
     st.session_state.history = []
 if "history_stats" not in st.session_state:
     st.session_state.history_stats = []
+if "bad_reason" not in st.session_state:
+    st.session_state.bad_reason = ""
+if "unlocked_endings" not in st.session_state:
+    st.session_state.unlocked_endings = set() # 記錄已解鎖的結局
 
 # ----------------- 📚 側邊欄：故事選擇與能力面板 -----------------
 st.sidebar.markdown("## 📚 選擇冒險故事")
@@ -119,18 +91,36 @@ st.sidebar.markdown(f"🦁 **勇氣堅毅**: {'⭐' * st.session_state.stats['br
 st.sidebar.markdown(f"💡 **STEAM 創意**: {'⭐' * st.session_state.stats['creativity']}")
 st.sidebar.markdown(f"❤️ **同理愛心**: {'⭐' * st.session_state.stats['empathy']}")
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🏆 成就圖鑑 (已解鎖結局)")
+if len(st.session_state.unlocked_endings) == 0:
+    st.sidebar.caption("尚未解鎖任何結局，繼續努力！")
+else:
+    for ending in st.session_state.unlocked_endings:
+        st.sidebar.markdown(f"✅ {ending}")
+
+# 計算頁數與進度
+total_nodes = len([k for k in current_story_nodes.keys() if not k.startswith("BAD_") and not k.startswith("6_")])
+try:
+    current_page = int(scene_key.split('_')[0])
+    progress_text = f"第 {current_page} 頁"
+except:
+    progress_text = "特殊進度"
+
 # ----------------- 📖 渲染場景 -----------------
 is_bad_ending = scene.get("is_bad_ending", False)
 
 if is_bad_ending:
-    # 💥 壞結局渲染
+    # 💥 壞結局渲染 (使用獨立的 bad_reason)
     st.error("💡【火鷹俠的成長型思維課】：失敗不可怕！重點係我哋從中學到咩，然後再試一次！")
     st.markdown(f'''
         <div class="bad-card">
+            <span class="story-progress">📌 冒險進度：💥 遇到挫折</span>
             <div class="story-title">📖 {scene.get("title_tc", "")} ({scene.get("title_en", "")})</div>
             <div class="story-sfx">{scene.get("sfx", "")}</div>
             <div class="story-text-tc">{scene.get("story_tc", "")}</div>
             <div class="story-text-en">{scene.get("story_en", "")}</div>
+            <div class="bad-reason-text">💥 發生了什麼事：{st.session_state.bad_reason}</div>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -139,7 +129,7 @@ if is_bad_ending:
         if st.button("↩️ 穿越時空！返回上一頁重新選擇！"):
             if st.session_state.history:
                 st.session_state.current_scene = st.session_state.history.pop()
-                st.session_state.stats = st.session_state.history_stats.pop()
+                st.session_state.stats = st.session_state.history_stats.pop() # 直接還原舊 stats
             else:
                 reset_game()
             st.rerun()
@@ -164,6 +154,9 @@ elif scene_key.startswith("6_"):
     
     title_tc, desc_tc = ending_data.get(scene_key, ending_data["6_DEFAULT"])
     
+    # 將結局加入解鎖清單
+    st.session_state.unlocked_endings.add(title_tc.split("：")[1])
+    
     st.markdown(f'''
         <div class="achievement-card">
             <h2>🏆 榮譽認證：小隊長成就頒發 🏆</h2>
@@ -181,6 +174,7 @@ else:
     # 🎯 普通場景渲染
     st.markdown(f'''
         <div class="story-card">
+            <span class="story-progress">📌 冒險進度：{progress_text}</span>
             <div class="story-title">📖 {scene.get("title_tc", "")} ({scene.get("title_en", "")})</div>
             <div class="story-sfx">{scene.get("sfx", "")}</div>
             <div class="story-text-tc">{scene.get("story_tc", "")}</div>
@@ -188,6 +182,7 @@ else:
         </div>
     ''', unsafe_allow_html=True)
     
+    # 圖片渲染與容錯機制
     if "images" in scene and scene["images"]:
         cols = st.columns(len(scene["images"]))
         for idx, img_url in enumerate(scene["images"]):
@@ -195,37 +190,39 @@ else:
                 try:
                     st.image(img_url, use_container_width=True)
                 except Exception:
-                    st.image("https://via.placeholder.com/800x500?text=🎨+火鷹俠+繪本", use_container_width=True)
+                    st.markdown("🖼️ *(火鷹俠正在想像這個精彩畫面...)*")
 
     st.markdown("---")
     st.markdown("### 🎯 小隊長，下一步你要點做？ (What will you do next?)")
     
     choices = scene.get("choices", {})
     if choices:
-        for opt_key, opt_data in choices.items():
-            if st.button(f"👉 選項 {opt_key}: {opt_data['text']}"):
+        # 動態排序選項字母
+        choices_items = list(choices.items())
+        for idx, (opt_key, opt_data) in enumerate(choices_items):
+            letter = chr(ord('A') + idx) # A, B, C...
+            
+            if st.button(f"👉 選項 {letter}: {opt_data['text']}"):
                 
-                # 記錄回溯數據 (Undo data)
+                # 1. 選擇前先保存當前 stats (未加 effect 前)
                 st.session_state.history.append(scene_key)
                 st.session_state.history_stats.append(st.session_state.stats.copy())
                 
-                # 屬性增減
+                # 2. 累加新效果
                 if "effect" in opt_data:
                     for k, v in opt_data["effect"].items():
                         st.session_state.stats[k] = max(0, st.session_state.stats[k] + v)
                 
-                # 決定下一頁 (若進入第五頁決戰，則自動推算最終結局)
-                if opt_data["next"].startswith("6_"):
-                    st.session_state.current_scene = get_ending_key(st.session_state.stats)
-                else:
-                    st.session_state.current_scene = opt_data["next"]
-                
-                # 若選項帶有壞結局屬性，直接覆蓋原因並跳轉
+                # 3. 處理跳轉與壞結局原因
                 if opt_data.get("is_bad", False):
+                    st.session_state.bad_reason = opt_data.get("bad_reason", "你的選擇帶來了意外後果！")
                     st.session_state.current_scene = opt_data["next"]
-                    if st.session_state.current_scene in current_story_nodes:
-                        current_story_nodes[st.session_state.current_scene]["story_tc"] = opt_data.get("bad_reason", "發生了意外！")
-
+                else:
+                    if opt_data["next"].startswith("6_"):
+                        st.session_state.current_scene = get_ending_key(st.session_state.stats)
+                    else:
+                        st.session_state.current_scene = opt_data["next"]
+                
                 st.rerun()
 
 st.sidebar.markdown("---")
