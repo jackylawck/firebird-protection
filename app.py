@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🎨 兒童雙語與響應式 CSS 升級
+# 🎨 兒童雙語與響應式 CSS
 st.markdown("""
     <style>
     .stApp { background-color: #E0F7FA; color: #000000 !important; }
@@ -31,7 +31,6 @@ st.markdown("""
     [data-testid="stSidebar"] { background-color: #1E293B !important; }
     [data-testid="stSidebar"] h2, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label { color: #FFFFFF !important; }
 
-    /* 按鈕置中與最大寬度限制 */
     div.stButton {
         display: flex;
         justify-content: center;
@@ -51,9 +50,12 @@ st.markdown("""
 # ----------------- GitHub API 呼叫函式 -----------------
 def call_github_ai(token, messages, max_tokens=800):
     url = "https://models.inference.ai.azure.com/chat/completions"
+    # 自動清除 Token 兩端可能誤帶的空白或換行符
+    clean_token = token.strip() if token else ""
+    
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {token}"
+        "Authorization": f"Bearer {clean_token}"
     }
     payload = {
         "messages": messages,
@@ -65,6 +67,8 @@ def call_github_ai(token, messages, max_tokens=800):
         response = requests.post(url, json=payload, headers=headers, timeout=25)
         if response.status_code == 200:
             return response.json()["choices"][0]["message"]["content"]
+        elif response.status_code == 401:
+            return "ERROR_401"
         else:
             return f"❌ 哎呀！火鷹俠暫時飛走咗去拉筋，請爸爸檢查一下通訊密碼！(Error: {response.status_code})"
     except Exception as e:
@@ -85,7 +89,7 @@ if "GITHUB_TOKEN" in st.secrets:
 else:
     # 2. 備用方案：側邊欄手動輸入
     with st.sidebar.expander("👨‍💼 家長設定區 (Parent Zone)", expanded=True):
-        st.markdown("請在此輸入 API 憑證（此密碼僅用於本次連線）：")
+        st.markdown("請在此輸入 API 憑證：")
         github_token = st.text_input("通訊密碼 (GitHub Token):", type="password")
 
 if not github_token:
@@ -126,8 +130,11 @@ else:
                 ]
                 with st.spinner("🚀 火鷹俠正在登場中..."):
                     reply = call_github_ai(github_token, messages, max_tokens=800)
-                    st.session_state.ai_history.append({"role": "assistant", "content": reply})
-                st.rerun()
+                    if reply == "ERROR_401":
+                        st.error("❌ 身份驗證失敗 (401)！請確認你的 GitHub Token 是否有效或具備相應權限。")
+                    else:
+                        st.session_state.ai_history.append({"role": "assistant", "content": reply})
+                        st.rerun()
 
         for msg in st.session_state.ai_history:
             if msg["role"] == "assistant":
@@ -152,8 +159,12 @@ else:
                     
                     with st.spinner("🚀 火鷹俠正在飛往下一個場景..."):
                         reply = call_github_ai(github_token, api_messages, max_tokens=800)
-                        st.session_state.ai_history.append({"role": "assistant", "content": reply})
-                    st.rerun()
+                        if reply == "ERROR_401":
+                            st.error("❌ 身份驗證失敗 (401)！請確認 GitHub Token 狀態。")
+                            st.session_state.ai_history.pop() # 移除失敗的使用者行動
+                        else:
+                            st.session_state.ai_history.append({"role": "assistant", "content": reply})
+                            st.rerun()
 
     # ================= TAB 2：全能學習對講機 =================
     with tab2:
@@ -185,8 +196,12 @@ else:
             with st.chat_message("assistant", avatar="📻"):
                 with st.spinner("📻 火鷹俠正在思考並按對講機回覆你..."):
                     chat_reply = call_github_ai(github_token, api_chat_messages, max_tokens=500)
-                    st.markdown(chat_reply)
-                    st.session_state.chat_history.append({"role": "assistant", "content": chat_reply})
+                    if chat_reply == "ERROR_401":
+                        st.error("❌ 通訊密碼無效 (401)，請檢查 Secrets 中的 Token。")
+                        st.session_state.chat_history.pop()
+                    else:
+                        st.markdown(chat_reply)
+                        st.session_state.chat_history.append({"role": "assistant", "content": chat_reply})
 
 # 側邊欄重置
 st.sidebar.markdown("---")
