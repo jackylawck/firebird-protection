@@ -2,15 +2,22 @@ import streamlit as st
 import streamlit.components.v1 as components
 from story_data import STORIES, get_ending_key
 
-# ----------------- 頁面基礎配置 -----------------
+# ----------------- 1. 頁面基礎配置 -----------------
 st.set_page_config(
-    page_title="火鷹俠故事館 | Firebird Protection",
+    page_title="火鷹俠全人教育故事館",
     page_icon="🦸‍♂️",
     layout="centered"
 )
 
-# ----------------- 🎨 分格容器與 UI CSS -----------------
+# ----------------- 2. 🎨 WhatsApp 網址分享預覽卡片 (Open Graph) 與 UI CSS -----------------
 st.markdown("""
+    <!-- WhatsApp / Social Media Share Meta Tags -->
+    <head>
+        <meta property="og:title" content="🦸‍♂️ 火鷹俠全人教育故事館" />
+        <meta property="og:description" content="Son & Dad Exclusive | 雙語繪本 × 成長型思維 × STEAM 互動冒險" />
+        <meta property="og:type" content="website" />
+    </head>
+
     <style>
     .stApp { background-color: #E0F7FA; color: #000000 !important; }
     p, span, label, div, h1, h2, h3, h4 { color: #000000 !important; font-family: 'Comic Sans MS', sans-serif; }
@@ -46,11 +53,11 @@ st.markdown("""
     .story-title { font-size: 1.3rem !important; color: #D81B60 !important; font-weight: 900; margin-bottom: 5px; }
     .story-progress { font-size: 0.8rem !important; color: #00838F !important; font-weight: bold; background: #E0F7FA; padding: 2px 8px; border-radius: 8px; display: inline-block; margin-bottom: 6px; }
     .story-sfx { font-size: 1rem !important; color: #FF9800 !important; font-weight: 900; margin-bottom: 6px; }
-    .story-text-tc { font-size: 1.2rem !important; line-height: 1.5; font-weight: bold; color: #000000 !important; }
+    .story-text-tc { font-size: 1.25rem !important; line-height: 1.5; font-weight: bold; color: #000000 !important; }
     .story-text-en { font-size: 1rem !important; line-height: 1.4; font-weight: 600; color: #424242 !important; margin-top: 6px; }
     .bad-reason-text { font-size: 1.05rem !important; font-weight: bold; color: #D32F2F !important; margin-top: 10px; padding: 8px; border-left: 4px solid #D32F2F; background: #FFCDD2; line-height: 1.4;}
 
-    /* 下格：按鈕區域 */
+    /* 下格：選擇按鈕區域 */
     div.stButton { display: flex; justify-content: center; }
     div.stButton > button { 
         background-color: #FFEB3B !important; 
@@ -73,7 +80,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ----------------- ⚙️ 初始化遊戲引擎 -----------------
+# ----------------- 3. ⚙️ 初始化遊戲引擎 -----------------
 def reset_game():
     st.session_state.current_scene = "1_START"
     st.session_state.stats = {"bravery": 0, "creativity": 0, "empathy": 0}
@@ -92,7 +99,7 @@ if "bad_reason" not in st.session_state:
 if "unlocked_endings" not in st.session_state:
     st.session_state.unlocked_endings = set()
 
-# ----------------- 📚 側邊欄：故事選擇與能力面板 -----------------
+# ----------------- 4. 📚 側邊欄：故事選擇與能力面板 -----------------
 st.sidebar.markdown("## 📚 選擇冒險故事\n*(Choose a Story)*")
 story_choice = st.sidebar.radio(
     "小隊長，你想玩哪個故事？ (Captain, which story do you want to play?)", 
@@ -137,10 +144,11 @@ try:
 except:
     progress_text = "特殊進度"
 
-# ----------------- 🔝 頁頭 -----------------
+# ----------------- 5. 🔝 標題 -----------------
 st.markdown('<p class="kids-title">🦸‍♂️ 火鷹俠故事館 🚀</p>', unsafe_allow_html=True)
+st.markdown('<p class="en-title">Firebird Protection: Interactive Hub</p>', unsafe_allow_html=True)
 
-# ----------------- 📦 上格：獨立滾動劇情容器 -----------------
+# ----------------- 6. 📦 上格：獨立滾動劇情容器 -----------------
 is_bad_ending = scene.get("is_bad_ending", False)
 
 if is_bad_ending:
@@ -189,7 +197,7 @@ else:
         </div>
     ''', unsafe_allow_html=True)
 
-# 🎯 強制滾動 JavaScript：每次渲染時，將上方故事盒子的 scrollTop 重置為 0（最頂）
+# 🎯 強制歸頂 JavaScript：每次切換頁面時，將「故事盒子」與「整個手機頁面」同時捲動回最頂部
 components.html("""
     <script>
         const storyBox = window.parent.document.getElementById('story-box');
@@ -200,7 +208,7 @@ components.html("""
     </script>
 """, height=0)
 
-# ----------------- 📦 下格：選擇按鈕區域 -----------------
+# ----------------- 7. 📦 下格：選擇按鈕區域 -----------------
 if is_bad_ending:
     col1, col2 = st.columns(2)
     with col1:
