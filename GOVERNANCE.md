@@ -38,3 +38,69 @@ To maintain the highest level of regulatory transparency and compliance:
 ---
 
 ## 3. Data Flow & Zero-Retention Technical Architecture (數據流與零留存技術架構)
+
+
+```
+
+[ User Interaction / 用戶操作 ]
+│
+▼
+┌────────────────────────────────────────────────────────┐
+│            CLIENT BROWSER SANDBOX (前端沙盒)            │
+│                                                        │
+│  ┌────────────────────────┐  ┌───────────────────────┐ │
+│  │  PWA / Service Worker  │  │ Deterministic Engine  │ │
+│  │   (Local Resources)    │  │   (FSM Story Logic)   │ │
+│  └────────────────────────┘  └───────────────────────┘ │
+│                             │                          │
+│                             ▼                          │
+│               [ LocalStorage / IndexedDB ]              │
+│               (User Device ONLY / 純本地儲存)           │
+└────────────────────────────────────────────────────────┘
+│
+✕  NO DATA OUTBOUND (完全無外部數據傳輸)
+▼
+[ Remote Cloud Servers / Third-Party Trackers / Analytics ]
+
+```
+
+### Architectural Commitments (架構核心承諾):
+1. **Local-First & Client-Side Execution (本地優先與客戶端運算):**  
+   The application runs entirely within the client's web browser environment. Storage is confined to the user's sandboxed `localStorage` or `IndexedDB`.
+2. **Zero Remote Data Retention (遠端零資料留存):**  
+   No user profiles, assessment logs, choices, or educational responses are transmitted, collected, stored, or processed on external servers.
+3. **No Third-Party Telemetry (無第三方遙測):**  
+   The source code contains no third-party behavioral trackers, marketing pixels, or covert fingerprinting scripts.
+
+---
+
+## 4. Educational Content & Algorithmic Safety (教育內容與演算法安全)
+
+- **Pedagogical Alignment (教育架構對齊):**  
+  Scenarios are curated to align with Key Learning Areas (KLAs) and positive character development frameworks (e.g., PERCCI: Perseverance, Empathy, Respect, Courage, Creativity, Integrity).
+- **Bias Prevention & Algorithmic Fairness (偏見防範與公平性):**  
+  Educational options and feedback paths are audited to ensure fairness, ethical sound judgment, and avoidance of cultural, socioeconomic, or gender biases.
+- **Transparency & Verifiability (透明度與可驗證性):**  
+  All pedagogical branches and deterministic calculation paths are fully documented in the open-source repository for community and institutional scrutiny.
+
+---
+
+## 5. Disclaimer & Legal Limitation of Liability (免責聲明與法律責任限制)
+
+### English
+1. **Educational Purpose Only:** This repository and software are provided solely for open-source educational, research, and interactive pedagogical demonstration purposes.
+2. **No Fiduciary or Professional Warranty:** The content provided does not constitute formal legal, psychological, or certified educational assessment advice.
+3. **"AS IS" Basis:** Pursuant to the open-source licensing terms governing this repository, this software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to fitness for a particular purpose or non-infringement.
+
+### 中文 (繁體)
+1. **僅供教育用途：** 本儲存庫與軟件僅作為開源教育、學術研究及互動教學展示之用。
+2. **非專業或法律諮詢保證：** 本項目所提供之情境評估與內容，不構成任何正式法律、心理學或具備法定效力之教育評估建議。
+3. **按現狀提供 (AS IS)：** 依據本開源項目之授權條款，軟件均按「現狀」提供，原作者不承擔任何明示或暗示之擔保責任，亦不對因使用或無法使用本軟件所產生之衍生性後果負責。
+
+---
+
+## 6. Governance & Compliance Contact (合規與治理聯繫)
+
+If you have inquiries regarding the algorithmic logic, regulatory scoping, or data privacy practices of this project, please open an Issue on the official repository or contact the project maintainer.
+
+如對本項目之演算法邏輯、法規界定或數據隱私設計有任何查詢，歡迎於本項目儲存庫提交 Issue 或聯繫專案維護者。
